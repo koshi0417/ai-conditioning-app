@@ -135,6 +135,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // 足: 運動量に強く依存
     fatigue.legs.score = physicalScore * 0.8 + mentalScore * 0.1;
 
+    fatigue._physicalScore = physicalScore;
+    fatigue._mentalScore = mentalScore;
     return fatigue;
   }
 
@@ -390,6 +392,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     renderResults(fatigue, sleep, topArea);
     showScreen('result');
+
+    // Save to history
+    const scores = Object.values(fatigue).filter(v => typeof v === 'object').map(v => v.score);
+    if (typeof RecoverFeatures !== 'undefined') {
+      RecoverFeatures.saveLog({
+        topArea,
+        exerciseTime: parseInt(els.exerciseTime.value),
+        deskTime: parseInt(els.deskTime.value),
+        exerciseIntensity,
+        mentalIntensity,
+        physicalScore: fatigue._physicalScore,
+        mentalScore: fatigue._mentalScore,
+        totalScore: scores.reduce((a,b) => a+b, 0),
+        sleepDuration: sleep.duration,
+      });
+    }
   });
 
   els.btnReset.addEventListener('click', () => {

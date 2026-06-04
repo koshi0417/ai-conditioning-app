@@ -17,245 +17,403 @@
     <p class="app-subtitle">今日の疲れを、たった3分でリセット</p>
   </header>
 
-  <!-- ===== Screen 1: Input ===== -->
-  <section id="screen-input" class="screen active">
-
-    <!-- 運動量 -->
-    <div class="glass-card">
-      <div class="card-header">
-        <div class="card-icon blue">🏃</div>
-        <div>
-          <div class="card-title">今日の運動量</div>
-          <div class="card-description">体を動かした時間や強度</div>
-        </div>
-      </div>
-      <div class="input-group">
-        <div class="input-label">
-          <span class="input-label-text">アクティビティ時間</span>
-          <span class="input-value" id="exercise-time-val">30分</span>
-        </div>
-        <div class="slider-container">
-          <input type="range" id="exercise-time" min="0" max="180" value="30" step="10" />
-          <div class="slider-labels"><span>0分</span><span>1時間</span><span>3時間</span></div>
-        </div>
-      </div>
-      <div class="input-group">
-        <div class="input-label">
-          <span class="input-label-text">運動の強度</span>
-        </div>
-        <div class="preset-buttons" id="exercise-intensity">
-          <button class="preset-btn" data-value="light">
-            <span class="preset-icon">🚶</span>
-            <span class="preset-text">軽い</span>
-          </button>
-          <button class="preset-btn active" data-value="moderate">
-            <span class="preset-icon">🏃</span>
-            <span class="preset-text">普通</span>
-          </button>
-          <button class="preset-btn" data-value="intense">
-            <span class="preset-icon">🔥</span>
-            <span class="preset-text">ハード</span>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- デスクワーク量 -->
-    <div class="glass-card">
-      <div class="card-header">
-        <div class="card-icon lavender">💻</div>
-        <div>
-          <div class="card-title">今日のデスクワーク量</div>
-          <div class="card-description">PC・スマホ作業、課題や研究</div>
-        </div>
-      </div>
-      <div class="input-group">
-        <div class="input-label">
-          <span class="input-label-text">PC/スマホ作業時間</span>
-          <span class="input-value" id="desk-time-val">4時間</span>
-        </div>
-        <div class="slider-container">
-          <input type="range" id="desk-time" min="0" max="14" value="4" step="1" />
-          <div class="slider-labels"><span>0h</span><span>7h</span><span>14h</span></div>
-        </div>
-      </div>
-      <div class="input-group">
-        <div class="input-label">
-          <span class="input-label-text">集中度（課題・研究）</span>
-        </div>
-        <div class="preset-buttons" id="mental-intensity">
-          <button class="preset-btn" data-value="light">
-            <span class="preset-icon">📖</span>
-            <span class="preset-text">軽い</span>
-          </button>
-          <button class="preset-btn active" data-value="moderate">
-            <span class="preset-icon">📝</span>
-            <span class="preset-text">普通</span>
-          </button>
-          <button class="preset-btn" data-value="intense">
-            <span class="preset-icon">🧠</span>
-            <span class="preset-text">ヘビー</span>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 就寝予定時刻 -->
-    <div class="glass-card">
-      <div class="card-header">
-        <div class="card-icon cyan">🛏️</div>
-        <div>
-          <div class="card-title">就寝予定時刻</div>
-          <div class="card-description">今夜ベッドに入る時間</div>
-        </div>
-      </div>
-      <div class="time-picker-group">
-        <input type="number" id="bed-hour" class="time-input" min="0" max="28" value="23" />
-        <span class="time-colon">:</span>
-        <input type="number" id="bed-minute" class="time-input" min="0" max="59" value="30" step="5" />
-      </div>
-    </div>
-
-    <button class="btn-primary" id="btn-analyze">
-      🔍 AIで今日のリカバリを分析
+  <!-- ===== Bottom Navigation ===== -->
+  <nav class="bottom-nav" id="bottom-nav">
+    <button class="nav-btn active" data-tab="home">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-label">ホーム</span>
     </button>
-  </section>
+    <button class="nav-btn" data-tab="history">
+      <span class="nav-icon">📊</span>
+      <span class="nav-label">履歴</span>
+    </button>
+    <button class="nav-btn" data-tab="badges">
+      <span class="nav-icon">🏆</span>
+      <span class="nav-label">実績</span>
+    </button>
+    <button class="nav-btn" data-tab="hydration">
+      <span class="nav-icon">💧</span>
+      <span class="nav-label">水分</span>
+    </button>
+  </nav>
 
-  <!-- ===== Screen 2: Loading ===== -->
-  <section id="screen-loading" class="screen">
-    <div class="loading-screen">
-      <div class="loading-orb">
-        <div class="loading-orb-inner">🧬</div>
-      </div>
-      <div class="loading-text">コンディションを分析中<span class="loading-dots"></span></div>
-      <div class="loading-subtext" id="loading-status">運動データを解析しています</div>
-      <div class="loading-progress">
-        <div class="loading-progress-bar" id="loading-bar"></div>
-      </div>
-    </div>
-  </section>
+  <!-- ===== Tab: Home (Input / Loading / Result) ===== -->
+  <div id="tab-home" class="tab-content active">
 
-  <!-- ===== Screen 3: Result ===== -->
-  <section id="screen-result" class="screen">
-
-    <!-- 疲労分析サマリー -->
-    <div class="glass-card">
-      <div class="card-header">
-        <div class="card-icon pink">📊</div>
-        <div>
-          <div class="card-title">今日の疲労分析</div>
-          <div class="card-description">AIがあなたの疲労パターンを分析しました</div>
+    <!-- Screen 1: Input -->
+    <section id="screen-input" class="screen active">
+      <!-- 運動量 -->
+      <div class="glass-card">
+        <div class="card-header">
+          <div class="card-icon blue">🏃</div>
+          <div>
+            <div class="card-title">今日の運動量</div>
+            <div class="card-description">体を動かした時間や強度</div>
+          </div>
         </div>
-      </div>
-      <div class="fatigue-summary" id="fatigue-badges"></div>
-      <p style="font-size:0.82rem; color:var(--text-secondary); margin-top:8px;" id="fatigue-comment"></p>
-    </div>
-
-    <!-- 3分リカバリストレッチ -->
-    <div class="glass-card">
-      <div class="card-header">
-        <div class="card-icon green">🧘</div>
-        <div>
-          <div class="card-title">3分リカバリストレッチ</div>
-          <div class="card-description">今日一番疲れた部位に合わせた専用メニュー</div>
+        <div class="input-group">
+          <div class="input-label">
+            <span class="input-label-text">アクティビティ時間</span>
+            <span class="input-value" id="exercise-time-val">30分</span>
+          </div>
+          <div class="slider-container">
+            <input type="range" id="exercise-time" min="0" max="180" value="30" step="10" />
+            <div class="slider-labels"><span>0分</span><span>1時間</span><span>3時間</span></div>
+          </div>
         </div>
-      </div>
-
-      <!-- Timer SVG -->
-      <div class="stretch-timer-display">
-        <div class="timer-ring-container">
-          <svg class="timer-ring" viewBox="0 0 140 140">
-            <defs>
-              <linearGradient id="timerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#6c8cff"/>
-                <stop offset="50%" stop-color="#a78bfa"/>
-                <stop offset="100%" stop-color="#38bdf8"/>
-              </linearGradient>
-            </defs>
-            <circle class="timer-ring-bg" cx="70" cy="70" r="65"/>
-            <circle class="timer-ring-progress" id="timer-progress" cx="70" cy="70" r="65"/>
-          </svg>
-          <div class="timer-text">
-            <div class="timer-value" id="timer-display">3:00</div>
-            <div class="timer-label">remaining</div>
+        <div class="input-group">
+          <div class="input-label">
+            <span class="input-label-text">運動の強度</span>
+          </div>
+          <div class="preset-buttons" id="exercise-intensity">
+            <button class="preset-btn" data-value="light">
+              <span class="preset-icon">🚶</span>
+              <span class="preset-text">軽い</span>
+            </button>
+            <button class="preset-btn active" data-value="moderate">
+              <span class="preset-icon">🏃</span>
+              <span class="preset-text">普通</span>
+            </button>
+            <button class="preset-btn" data-value="intense">
+              <span class="preset-icon">🔥</span>
+              <span class="preset-text">ハード</span>
+            </button>
           </div>
         </div>
       </div>
 
-      <!-- Step Indicator -->
-      <div class="stretch-step-indicator" id="step-indicators">
-        <div class="step-dot active" data-step="0"></div>
-        <div class="step-dot" data-step="1"></div>
-        <div class="step-dot" data-step="2"></div>
-      </div>
-
-      <!-- Stretch Content -->
-      <div class="stretch-content">
-        <div class="stretch-emoji" id="stretch-emoji">👁️</div>
-        <div class="stretch-name" id="stretch-name">ステップ1: 目の疲れリセット</div>
-        <div class="stretch-instruction" id="stretch-instruction">
-          目を閉じて、眼球をゆっくり上下左右に動かします。各方向5秒キープ。
+      <!-- デスクワーク量 -->
+      <div class="glass-card">
+        <div class="card-header">
+          <div class="card-icon lavender">💻</div>
+          <div>
+            <div class="card-title">今日のデスクワーク量</div>
+            <div class="card-description">PC・スマホ作業、課題や研究</div>
+          </div>
+        </div>
+        <div class="input-group">
+          <div class="input-label">
+            <span class="input-label-text">PC/スマホ作業時間</span>
+            <span class="input-value" id="desk-time-val">4時間</span>
+          </div>
+          <div class="slider-container">
+            <input type="range" id="desk-time" min="0" max="14" value="4" step="1" />
+            <div class="slider-labels"><span>0h</span><span>7h</span><span>14h</span></div>
+          </div>
+        </div>
+        <div class="input-group">
+          <div class="input-label">
+            <span class="input-label-text">集中度（課題・研究）</span>
+          </div>
+          <div class="preset-buttons" id="mental-intensity">
+            <button class="preset-btn" data-value="light">
+              <span class="preset-icon">📖</span>
+              <span class="preset-text">軽い</span>
+            </button>
+            <button class="preset-btn active" data-value="moderate">
+              <span class="preset-icon">📝</span>
+              <span class="preset-text">普通</span>
+            </button>
+            <button class="preset-btn" data-value="intense">
+              <span class="preset-icon">🧠</span>
+              <span class="preset-text">ヘビー</span>
+            </button>
+          </div>
         </div>
       </div>
 
-      <div class="stretch-controls">
-        <button class="btn-stretch start" id="btn-timer">▶ スタート</button>
-        <button class="btn-stretch skip" id="btn-skip">次へ ▶▶</button>
+      <!-- 就寝予定時刻 -->
+      <div class="glass-card">
+        <div class="card-header">
+          <div class="card-icon cyan">🛏️</div>
+          <div>
+            <div class="card-title">就寝予定時刻</div>
+            <div class="card-description">今夜ベッドに入る時間</div>
+          </div>
+        </div>
+        <div class="time-picker-group">
+          <input type="number" id="bed-hour" class="time-input" min="0" max="28" value="23" />
+          <span class="time-colon">:</span>
+          <input type="number" id="bed-minute" class="time-input" min="0" max="59" value="30" step="5" />
+        </div>
       </div>
-    </div>
 
-    <!-- 最適睡眠情報 -->
+      <button class="btn-primary" id="btn-analyze">
+        🔍 AIで今日のリカバリを分析
+      </button>
+    </section>
+
+    <!-- Screen 2: Loading -->
+    <section id="screen-loading" class="screen">
+      <div class="loading-screen">
+        <div class="loading-orb">
+          <div class="loading-orb-inner">🧬</div>
+        </div>
+        <div class="loading-text">コンディションを分析中<span class="loading-dots"></span></div>
+        <div class="loading-subtext" id="loading-status">運動データを解析しています</div>
+        <div class="loading-progress">
+          <div class="loading-progress-bar" id="loading-bar"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screen 3: Result -->
+    <section id="screen-result" class="screen">
+      <!-- 疲労分析サマリー -->
+      <div class="glass-card">
+        <div class="card-header">
+          <div class="card-icon pink">📊</div>
+          <div>
+            <div class="card-title">今日の疲労分析</div>
+            <div class="card-description">AIがあなたの疲労パターンを分析しました</div>
+          </div>
+        </div>
+        <div class="fatigue-summary" id="fatigue-badges"></div>
+        <p style="font-size:0.82rem; color:var(--text-secondary); margin-top:8px;" id="fatigue-comment"></p>
+      </div>
+
+      <!-- 3分リカバリストレッチ -->
+      <div class="glass-card">
+        <div class="card-header">
+          <div class="card-icon green">🧘</div>
+          <div>
+            <div class="card-title">3分リカバリストレッチ</div>
+            <div class="card-description">今日一番疲れた部位に合わせた専用メニュー</div>
+          </div>
+        </div>
+        <div class="stretch-timer-display">
+          <div class="timer-ring-container">
+            <svg class="timer-ring" viewBox="0 0 140 140">
+              <defs>
+                <linearGradient id="timerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#6c8cff"/>
+                  <stop offset="50%" stop-color="#a78bfa"/>
+                  <stop offset="100%" stop-color="#38bdf8"/>
+                </linearGradient>
+              </defs>
+              <circle class="timer-ring-bg" cx="70" cy="70" r="65"/>
+              <circle class="timer-ring-progress" id="timer-progress" cx="70" cy="70" r="65"/>
+            </svg>
+            <div class="timer-text">
+              <div class="timer-value" id="timer-display">3:00</div>
+              <div class="timer-label">remaining</div>
+            </div>
+          </div>
+        </div>
+        <div class="stretch-step-indicator" id="step-indicators">
+          <div class="step-dot active" data-step="0"></div>
+          <div class="step-dot" data-step="1"></div>
+          <div class="step-dot" data-step="2"></div>
+        </div>
+        <div class="stretch-content">
+          <div class="stretch-emoji" id="stretch-emoji">👁️</div>
+          <div class="stretch-name" id="stretch-name">ステップ1: 目の疲れリセット</div>
+          <div class="stretch-instruction" id="stretch-instruction">
+            目を閉じて、眼球をゆっくり上下左右に動かします。各方向5秒キープ。
+          </div>
+        </div>
+        <div class="stretch-controls">
+          <button class="btn-stretch start" id="btn-timer">▶ スタート</button>
+          <button class="btn-stretch skip" id="btn-skip">次へ ▶▶</button>
+        </div>
+      </div>
+
+      <!-- 最適睡眠情報 -->
+      <div class="glass-card">
+        <div class="card-header">
+          <div class="card-icon cyan">😴</div>
+          <div>
+            <div class="card-title">最適な睡眠プラン</div>
+            <div class="card-description">睡眠サイクル（90分）に基づく最適プラン</div>
+          </div>
+        </div>
+        <div class="sleep-info-grid">
+          <div class="sleep-info-item">
+            <div class="info-icon">🛏️</div>
+            <div class="info-value" id="sleep-bedtime">23:30</div>
+            <div class="info-label">就寝時刻</div>
+          </div>
+          <div class="sleep-info-item">
+            <div class="info-icon">⏰</div>
+            <div class="info-value" id="sleep-wakeup">6:30</div>
+            <div class="info-label">推奨起床</div>
+          </div>
+          <div class="sleep-info-item">
+            <div class="info-icon">💤</div>
+            <div class="info-value" id="sleep-duration">7h</div>
+            <div class="info-label">睡眠時間</div>
+          </div>
+          <div class="sleep-info-item">
+            <div class="info-icon">🔄</div>
+            <div class="info-value" id="sleep-cycles">5回</div>
+            <div class="info-label">睡眠サイクル</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 翌朝スケジュール -->
+      <div class="glass-card">
+        <div class="card-header">
+          <div class="card-icon orange">📅</div>
+          <div>
+            <div class="card-title">翌朝の推奨スケジュール</div>
+            <div class="card-description">効率的な朝の過ごし方</div>
+          </div>
+        </div>
+        <div class="schedule-timeline" id="schedule-timeline"></div>
+      </div>
+
+      <button class="btn-secondary" id="btn-reset">🔄 もう一度入力する</button>
+    </section>
+
+  </div>
+
+  <!-- ===== Tab: History ===== -->
+  <div id="tab-history" class="tab-content">
     <div class="glass-card">
       <div class="card-header">
-        <div class="card-icon cyan">😴</div>
+        <div class="card-icon blue">📈</div>
         <div>
-          <div class="card-title">最適な睡眠プラン</div>
-          <div class="card-description">睡眠サイクル（90分）に基づく最適プラン</div>
+          <div class="card-title">コンディション履歴</div>
+          <div class="card-description">過去の記録を振り返る</div>
         </div>
       </div>
-      <div class="sleep-info-grid">
-        <div class="sleep-info-item">
-          <div class="info-icon">🛏️</div>
-          <div class="info-value" id="sleep-bedtime">23:30</div>
-          <div class="info-label">就寝時刻</div>
+      <!-- 週間グラフ -->
+      <div class="history-chart-container">
+        <div class="chart-header">
+          <span class="chart-title">直近7日間の疲労傾向</span>
         </div>
-        <div class="sleep-info-item">
-          <div class="info-icon">⏰</div>
-          <div class="info-value" id="sleep-wakeup">6:30</div>
-          <div class="info-label">推奨起床</div>
-        </div>
-        <div class="sleep-info-item">
-          <div class="info-icon">💤</div>
-          <div class="info-value" id="sleep-duration">7h</div>
-          <div class="info-label">睡眠時間</div>
-        </div>
-        <div class="sleep-info-item">
-          <div class="info-icon">🔄</div>
-          <div class="info-value" id="sleep-cycles">5回</div>
-          <div class="info-label">睡眠サイクル</div>
+        <div class="bar-chart" id="history-chart"></div>
+        <div class="chart-legend">
+          <span class="legend-item"><span class="legend-dot" style="background:var(--accent-pink)"></span>身体</span>
+          <span class="legend-item"><span class="legend-dot" style="background:var(--accent-lavender)"></span>精神</span>
         </div>
       </div>
     </div>
 
-    <!-- 翌朝スケジュール -->
     <div class="glass-card">
       <div class="card-header">
-        <div class="card-icon orange">📅</div>
+        <div class="card-icon lavender">📋</div>
         <div>
-          <div class="card-title">翌朝の推奨スケジュール</div>
-          <div class="card-description">効率的な朝の過ごし方</div>
+          <div class="card-title">記録一覧</div>
+          <div class="card-description">タップで詳細を表示</div>
         </div>
       </div>
-      <div class="schedule-timeline" id="schedule-timeline">
-        <!-- JS で動的生成 -->
+      <div class="history-list" id="history-list">
+        <div class="history-empty">
+          <span style="font-size:2rem;">📭</span>
+          <p>まだ記録がありません</p>
+          <p class="text-muted">ホームから分析を行うと記録が保存されます</p>
+        </div>
       </div>
     </div>
 
-    <button class="btn-secondary" id="btn-reset">🔄 もう一度入力する</button>
-  </section>
+    <button class="btn-secondary" id="btn-clear-history" style="margin-top:8px;">🗑️ 履歴をクリア</button>
+  </div>
+
+  <!-- ===== Tab: Badges ===== -->
+  <div id="tab-badges" class="tab-content">
+    <div class="glass-card">
+      <div class="card-header">
+        <div class="card-icon orange">🔥</div>
+        <div>
+          <div class="card-title">連続記録</div>
+          <div class="card-description">毎日の継続を可視化</div>
+        </div>
+      </div>
+      <div class="streak-display">
+        <div class="streak-number" id="streak-count">0</div>
+        <div class="streak-label">日連続</div>
+      </div>
+      <div class="streak-calendar" id="streak-calendar"></div>
+    </div>
+
+    <div class="glass-card">
+      <div class="card-header">
+        <div class="card-icon green">🏅</div>
+        <div>
+          <div class="card-title">獲得バッジ</div>
+          <div class="card-description">目標を達成してバッジを集めよう</div>
+        </div>
+      </div>
+      <div class="badge-grid" id="badge-grid"></div>
+    </div>
+  </div>
+
+  <!-- ===== Tab: Hydration ===== -->
+  <div id="tab-hydration" class="tab-content">
+    <div class="glass-card">
+      <div class="card-header">
+        <div class="card-icon cyan">💧</div>
+        <div>
+          <div class="card-title">水分補給トラッカー</div>
+          <div class="card-description">こまめな水分補給で疲労回復をサポート</div>
+        </div>
+      </div>
+      <div class="hydration-ring-container">
+        <svg class="hydration-ring" viewBox="0 0 160 160">
+          <defs>
+            <linearGradient id="hydroGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#38bdf8"/>
+              <stop offset="100%" stop-color="#34d399"/>
+            </linearGradient>
+          </defs>
+          <circle class="hydration-ring-bg" cx="80" cy="80" r="70"/>
+          <circle class="hydration-ring-progress" id="hydration-progress" cx="80" cy="80" r="70"/>
+        </svg>
+        <div class="hydration-text">
+          <div class="hydration-value" id="hydration-value">0</div>
+          <div class="hydration-unit">/ <span id="hydration-goal">8</span> 杯</div>
+        </div>
+      </div>
+      <div class="hydration-buttons">
+        <button class="btn-hydration" id="btn-add-water" title="コップ1杯追加">
+          💧 +1杯
+        </button>
+        <button class="btn-hydration outline" id="btn-remove-water" title="1杯取り消し">
+          ➖ 1杯
+        </button>
+      </div>
+    </div>
+
+    <!-- 休憩リマインダー -->
+    <div class="glass-card">
+      <div class="card-header">
+        <div class="card-icon lavender">⏰</div>
+        <div>
+          <div class="card-title">休憩リマインダー</div>
+          <div class="card-description">デスクワーク中の休憩を通知</div>
+        </div>
+      </div>
+      <div class="reminder-status" id="reminder-status">
+        <div class="reminder-icon">⏸️</div>
+        <div class="reminder-info">
+          <div class="reminder-state" id="reminder-state-text">停止中</div>
+          <div class="reminder-detail" id="reminder-detail">ボタンを押して開始</div>
+        </div>
+      </div>
+      <div class="reminder-settings">
+        <div class="input-label">
+          <span class="input-label-text">通知間隔</span>
+          <span class="input-value" id="reminder-interval-val">30分</span>
+        </div>
+        <div class="slider-container">
+          <input type="range" id="reminder-interval" min="15" max="90" value="30" step="5" />
+          <div class="slider-labels"><span>15分</span><span>45分</span><span>90分</span></div>
+        </div>
+      </div>
+      <button class="btn-primary" id="btn-toggle-reminder" style="margin-top:12px;">
+        ▶ リマインダー開始
+      </button>
+      <div class="reminder-tips" id="reminder-tips" style="display:none;">
+        <div class="tip-card" id="current-tip"></div>
+      </div>
+    </div>
+  </div>
 
 </div>
 
 <script src="app.js"></script>
+<script src="features.js"></script>
 </body>
 </html>
