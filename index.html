@@ -43,88 +43,95 @@
 
     <!-- Screen 1: Input -->
     <section id="screen-input" class="screen active">
-      <!-- 運動量 -->
-      <div class="glass-card">
-        <div class="card-header">
-          <div class="card-icon blue">🏃</div>
-          <div>
-            <div class="card-title">今日の運動量</div>
-            <div class="card-description">体を動かした時間や強度</div>
+
+      <!-- ★ Hero Greeting Card -->
+      <div class="glass-card hero-card stagger-1">
+        <div class="hero-greeting" id="hero-greeting">こんばんは 🌙</div>
+        <div class="hero-message">今日の活動を記録して、最適なリカバリプランを作りましょう</div>
+        <div class="hero-score-row">
+          <div class="hero-score-ring">
+            <svg viewBox="0 0 80 80" class="hero-ring-svg">
+              <circle cx="40" cy="40" r="34" class="hero-ring-bg"/>
+              <circle cx="40" cy="40" r="34" class="hero-ring-fill" id="hero-score-ring"/>
+            </svg>
+            <div class="hero-score-num" id="hero-score-num">—</div>
           </div>
-        </div>
-        <div class="input-group">
-          <div class="input-label">
-            <span class="input-label-text">アクティビティ時間</span>
-            <span class="input-value" id="exercise-time-val">30分</span>
-          </div>
-          <div class="slider-container">
-            <input type="range" id="exercise-time" min="0" max="180" value="30" step="10" />
-            <div class="slider-labels"><span>0分</span><span>1時間</span><span>3時間</span></div>
-          </div>
-        </div>
-        <div class="input-group">
-          <div class="input-label">
-            <span class="input-label-text">運動の強度</span>
-          </div>
-          <div class="preset-buttons" id="exercise-intensity">
-            <button class="preset-btn" data-value="light">
-              <span class="preset-icon">🚶</span>
-              <span class="preset-text">軽い</span>
-            </button>
-            <button class="preset-btn active" data-value="moderate">
-              <span class="preset-icon">🏃</span>
-              <span class="preset-text">普通</span>
-            </button>
-            <button class="preset-btn" data-value="intense">
-              <span class="preset-icon">🔥</span>
-              <span class="preset-text">ハード</span>
-            </button>
+          <div class="hero-score-info">
+            <div class="hero-score-label">前回のスコア</div>
+            <div class="hero-score-detail" id="hero-score-detail">まだ記録がありません</div>
           </div>
         </div>
       </div>
 
-      <!-- デスクワーク量 -->
-      <div class="glass-card">
-        <div class="card-header">
-          <div class="card-icon lavender">💻</div>
-          <div>
-            <div class="card-title">今日のデスクワーク量</div>
-            <div class="card-description">PC・スマホ作業、課題や研究</div>
+      <!-- ★ 2-Column Input Grid -->
+      <div class="input-grid">
+        <!-- 運動量カード -->
+        <div class="glass-card compact-card stagger-2">
+          <div class="compact-header">
+            <span class="compact-icon">🏃</span>
+            <span class="compact-title">運動量</span>
+          </div>
+          <div class="input-group">
+            <div class="input-label">
+              <span class="input-label-text">時間</span>
+              <span class="input-value" id="exercise-time-val">30分</span>
+            </div>
+            <div class="slider-container">
+              <input type="range" id="exercise-time" min="0" max="180" value="30" step="10" />
+              <div class="slider-labels"><span>0</span><span>1h</span><span>3h</span></div>
+            </div>
+          </div>
+          <div class="input-group" style="margin-bottom:0">
+            <div class="input-label"><span class="input-label-text">強度</span></div>
+            <div class="preset-buttons" id="exercise-intensity">
+              <button class="preset-btn" data-value="light">
+                <span class="preset-icon">🚶</span><span class="preset-text">軽い</span>
+              </button>
+              <button class="preset-btn active" data-value="moderate">
+                <span class="preset-icon">🏃</span><span class="preset-text">普通</span>
+              </button>
+              <button class="preset-btn" data-value="intense">
+                <span class="preset-icon">🔥</span><span class="preset-text">ハード</span>
+              </button>
+            </div>
           </div>
         </div>
-        <div class="input-group">
-          <div class="input-label">
-            <span class="input-label-text">PC/スマホ作業時間</span>
-            <span class="input-value" id="desk-time-val">4時間</span>
+
+        <!-- デスクワークカード -->
+        <div class="glass-card compact-card stagger-3">
+          <div class="compact-header">
+            <span class="compact-icon">💻</span>
+            <span class="compact-title">デスクワーク</span>
           </div>
-          <div class="slider-container">
-            <input type="range" id="desk-time" min="0" max="14" value="4" step="1" />
-            <div class="slider-labels"><span>0h</span><span>7h</span><span>14h</span></div>
+          <div class="input-group">
+            <div class="input-label">
+              <span class="input-label-text">PC時間</span>
+              <span class="input-value" id="desk-time-val">4時間</span>
+            </div>
+            <div class="slider-container">
+              <input type="range" id="desk-time" min="0" max="14" value="4" step="1" />
+              <div class="slider-labels"><span>0</span><span>7h</span><span>14h</span></div>
+            </div>
           </div>
-        </div>
-        <div class="input-group">
-          <div class="input-label">
-            <span class="input-label-text">集中度（課題・研究）</span>
-          </div>
-          <div class="preset-buttons" id="mental-intensity">
-            <button class="preset-btn" data-value="light">
-              <span class="preset-icon">📖</span>
-              <span class="preset-text">軽い</span>
-            </button>
-            <button class="preset-btn active" data-value="moderate">
-              <span class="preset-icon">📝</span>
-              <span class="preset-text">普通</span>
-            </button>
-            <button class="preset-btn" data-value="intense">
-              <span class="preset-icon">🧠</span>
-              <span class="preset-text">ヘビー</span>
-            </button>
+          <div class="input-group" style="margin-bottom:0">
+            <div class="input-label"><span class="input-label-text">集中度</span></div>
+            <div class="preset-buttons" id="mental-intensity">
+              <button class="preset-btn" data-value="light">
+                <span class="preset-icon">📖</span><span class="preset-text">軽い</span>
+              </button>
+              <button class="preset-btn active" data-value="moderate">
+                <span class="preset-icon">📝</span><span class="preset-text">普通</span>
+              </button>
+              <button class="preset-btn" data-value="intense">
+                <span class="preset-icon">🧠</span><span class="preset-text">ヘビー</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- 就寝予定時刻 -->
-      <div class="glass-card">
+      <div class="glass-card stagger-4">
         <div class="card-header">
           <div class="card-icon cyan">🛏️</div>
           <div>

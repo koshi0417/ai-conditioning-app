@@ -245,10 +245,43 @@ const RecoverAdvanced = (() => {
     }
   }
 
+  // ===== HERO GREETING =====
+  function initHero() {
+    const h = new Date().getHours();
+    let greeting;
+    if (h >= 5 && h < 12) greeting = 'おはようございます ☀️';
+    else if (h >= 12 && h < 17) greeting = 'こんにちは 🌤️';
+    else if (h >= 17 && h < 21) greeting = 'こんばんは 🌆';
+    else greeting = 'おやすみ前に 🌙';
+
+    const el = document.getElementById('hero-greeting');
+    if (el) el.textContent = greeting;
+
+    // Show last score from localStorage
+    try {
+      const data = JSON.parse(localStorage.getItem('recoverAI')) || {};
+      const logs = data.logs || [];
+      if (logs.length > 0) {
+        const last = logs[0];
+        const score = Math.max(10, Math.min(98, Math.round(90 - (last.totalScore || 0) * 2 + 15)));
+        const scoreNum = document.getElementById('hero-score-num');
+        const scoreDetail = document.getElementById('hero-score-detail');
+        const ring = document.getElementById('hero-score-ring');
+        if (scoreNum) scoreNum.textContent = score;
+        if (scoreDetail) scoreDetail.textContent = `${last.date} — 疲労部位: ${({eyes:'目',neck_shoulder:'首・肩',lower_back:'腰',legs:'足',full_body:'全身'})[last.topArea]||'—'}`;
+        if (ring) {
+          const circ = 2 * Math.PI * 34;
+          setTimeout(() => { ring.style.strokeDashoffset = circ * (1 - score / 100); }, 300);
+        }
+      }
+    } catch(e) {}
+  }
+
   // ===== INIT =====
   function init() {
     initParticles();
     initBreathing();
+    initHero();
   }
 
   return { init, updateBodyMap, updateForecast };

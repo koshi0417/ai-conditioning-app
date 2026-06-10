@@ -126,6 +126,120 @@ body::before {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* ===== Stagger Animation ===== */
+.stagger-1 { animation: fadeSlideIn 0.5s ease 0.05s both; }
+.stagger-2 { animation: fadeSlideIn 0.5s ease 0.15s both; }
+.stagger-3 { animation: fadeSlideIn 0.5s ease 0.25s both; }
+.stagger-4 { animation: fadeSlideIn 0.5s ease 0.35s both; }
+.stagger-5 { animation: fadeSlideIn 0.5s ease 0.45s both; }
+
+/* ===== Hero Card ===== */
+.hero-card { text-align: center; padding: 28px 24px !important; }
+
+.hero-greeting {
+  font-size: 1.4rem;
+  font-weight: 700;
+  background: var(--gradient-main);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 6px;
+}
+
+.hero-message {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 18px;
+  line-height: 1.5;
+}
+
+.hero-score-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 14px;
+  background: rgba(108, 140, 255, 0.05);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(108, 140, 255, 0.08);
+}
+
+.hero-score-ring {
+  width: 64px;
+  height: 64px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.hero-ring-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.hero-ring-bg { fill: none; stroke: rgba(108,140,255,0.12); stroke-width: 5; }
+.hero-ring-fill {
+  fill: none;
+  stroke: url(#timerGradient);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-dasharray: 213.63;
+  stroke-dashoffset: 213.63;
+  transition: stroke-dashoffset 1s ease;
+}
+
+.hero-score-num {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.hero-score-info { text-align: left; }
+.hero-score-label { font-size: 0.72rem; color: var(--text-muted); margin-bottom: 2px; }
+.hero-score-detail { font-size: 0.8rem; color: var(--text-secondary); }
+
+/* ===== 2-Column Input Grid ===== */
+.input-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 4px;
+}
+
+/* ===== Compact Card ===== */
+.compact-card { padding: 20px !important; }
+
+.compact-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-glass);
+}
+
+.compact-icon { font-size: 1.3rem; }
+
+.compact-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.compact-card .input-group { margin-bottom: 16px; }
+.compact-card .input-label-text { font-size: 0.8rem; }
+.compact-card .preset-btn { min-width: 50px; padding: 8px 4px; font-size: 0.7rem; }
+.compact-card .preset-btn .preset-icon { font-size: 1rem; }
+
+@media (max-width: 500px) {
+  .input-grid { grid-template-columns: 1fr; }
+}
+
 /* ===== Glass Card ===== */
 .glass-card {
   background: var(--bg-card);
