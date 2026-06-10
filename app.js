@@ -258,9 +258,33 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="timeline-content">
           <div class="timeline-title">${item.title}</div>
           <div class="timeline-desc">${item.desc}</div>
-        </div>`;
+        </div>
+      `;
       els.scheduleTL.appendChild(div);
     });
+
+    // Calendar Link Generation
+    const btnCal = document.getElementById('btn-calendar');
+    if (btnCal) {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const yyyy = tomorrow.getFullYear();
+      const mm = String(tomorrow.getMonth() + 1).padStart(2, '0');
+      const dd = String(tomorrow.getDate()).padStart(2, '0');
+      const dateStr = `${yyyy}${mm}${dd}`;
+
+      const startH = String(sleep.wakeHour).padStart(2, '0');
+      const startM = String(sleep.wakeMinute).padStart(2, '0');
+      const endH = String((sleep.wakeHour + 1) % 24).padStart(2, '0');
+      
+      const timeStrStart = `T${startH}${startM}00`;
+      const timeStrEnd = `T${endH}${startM}00`;
+
+      const title = encodeURIComponent('Recover AI - モーニングルーティン');
+      const details = encodeURIComponent('AIが生成した朝の最適スケジュール:\n\n' + schedule.map(s => `${s.time} ${s.title}\n${s.desc}`).join('\n\n'));
+
+      btnCal.href = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dateStr}${timeStrStart}/${dateStr}${timeStrEnd}&details=${details}`;
+    }
 
     // Stretch plan
     stretchPlan = stretchDB[topArea] || stretchDB.full_body;

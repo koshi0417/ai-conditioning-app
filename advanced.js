@@ -137,6 +137,31 @@ const RecoverAdvanced = (() => {
       const bar = el('forecast-bar');
       if (bar) bar.style.width = forecastScore + '%';
     }, 300);
+
+    // Call food advice
+    updateFoodAdvice(fatigue);
+  }
+
+  // ===== FOOD ADVICE =====
+  function updateFoodAdvice(fatigue) {
+    const el = document.getElementById('food-advice');
+    if (!el) return;
+
+    let advice = "バランスの良い食事を心がけましょう。水分補給も忘れずに！";
+    let icon = "🍱";
+    
+    if (fatigue._physicalScore > fatigue._mentalScore) {
+      icon = "🥩";
+      advice = "肉体的な疲労が溜まっています。筋肉の修復を助ける「タンパク質（鶏肉・大豆）」と、疲労回復の「ビタミンB1（豚肉・玄米）」を積極的に摂りましょう。";
+    } else if (fatigue._mentalScore > fatigue._physicalScore) {
+      icon = "🐟";
+      advice = "脳や神経の疲労が見られます。リラックス効果のある「GABA（発芽玄米・トマト）」や、脳の栄養になる「DHA（青魚）」がおすすめです。";
+    } else if (fatigue.eyes && fatigue.eyes.score >= 5) {
+      icon = "🫐";
+      advice = "目の疲れが強いですね。抗酸化作用の高い「アントシアニン（ブルーベリー）」や「ビタミンA（ニンジン・かぼちゃ）」を意識して摂りましょう。";
+    }
+
+    el.innerHTML = `<strong>${icon} おすすめ:</strong> ${advice}`;
   }
 
   // ===== BREATHING EXERCISE =====
@@ -277,11 +302,125 @@ const RecoverAdvanced = (() => {
     } catch(e) {}
   }
 
+  // ===== BGM CONTROL =====
+  let audioCtx = null;
+  let noiseNode = null;
+  let gainNode = null;
+  let isBgmPlaying = false;
+  let lastOut = 0;
+
+  function initBgm() {
+    const btn = document.getElementById('btn-bgm');
+    if (!btn) return;
+
+    btn.addEventListener('click', () => {
+      const icon = document.getElementById('bgm-icon');
+      const text = document.getElementById('bgm-text');
+
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+
+      if (isBgmPlaying) {
+        if (gainNode) {
+          gainNode.gain.setTargetAtTime(0, audioCtx.currentTime, 0.5);
+          setTimeout(() => { if (noiseNode) { noiseNode.stop(); noiseNode = null; } }, 1000);
+        }
+        isBgmPlaying = false;
+        icon.textContent = '🔈';
+        text.textContent = 'BGM オフ';
+      } else {
+        const bufferSize = audioCtx.sampleRate * 2;
+        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const output = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          const white = Math.random() * 2 - 1;
+          output[i] = (lastOut + (0.02 * white)) / 1.02;
+          lastOut = output[i];
+          output[i] *= 3.5;
+        }
+        
+        noiseNode = audioCtx.createBufferSource();
+        noiseNode.buffer = buffer;
+        noiseNode.loop = true;
+
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.value = 400;
+
+        gainNode = audioCtx.createGain();
+        gainNode.gain.value = 0;
+
+        noiseNode.connect(filter);
+        filter.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        noiseNode.start();
+        gainNode.gain.setTargetAtTime(0.1, audioCtx.currentTime, 1.0);
+
+        isBgmPlaying = true;
+        icon.textContent = '🔊';
+        text.textContent = 'BGM オン';
+      }
+    });
+  }
+
+  // ===== AI CHAT =====
+  function initChat() {
+    const fab = document.getElementById('chat-fab');
+    const win = document.getElementById('chat-window');
+    const closeBtn = document.getElementById('chat-close');
+    const input = document.getElementById('chat-input');
+    const sendBtn = document.getElementById('chat-send');
+    const messages = document.getElementById('chat-messages');
+
+    if (!fab || !win) return;
+
+    fab.addEventListener('click', () => win.classList.add('open'));
+    closeBtn.addEventListener('click', () => win.classList.remove('open'));
+
+    function addMsg(text, type) {
+      const msg = document.createElement('div');
+      msg.className = `chat-msg ${type}`;
+      msg.textContent = text;
+      messages.appendChild(msg);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function handleSend() {
+      const text = input.value.trim();
+      if (!text) return;
+      addMsg(text, 'user');
+      input.value = '';
+
+      setTimeout(() => {
+        let reply = "なるほど。お疲れ様です。無理をせず、今日は早めに休みましょう！";
+        if (text.includes('目') || text.includes('PC') || text.includes('スマホ')) {
+          reply = "目の疲れですね。ホットアイマスクや、遠くを見るストレッチが効果的です！";
+        } else if (text.includes('肩') || text.includes('首')) {
+          reply = "肩や首周りがガチガチかもしれません。深呼吸しながら、ゆっくり首を回してみてください。";
+        } else if (text.includes('腰')) {
+          reply = "腰の痛みには、仰向けで膝を抱えるストレッチがおすすめです。";
+        } else if (text.includes('足') || text.includes('脚')) {
+          reply = "足の疲れですね。壁に足を立てかけて、血流を戻すポーズ（壁ドンストレッチ）が良いですよ！";
+        } else if (text.includes('眠') || text.includes('不眠')) {
+          reply = "眠れない時は、画面の「呼吸リラクゼーション(4-7-8呼吸法)」を試してみてください。自律神経が整います。";
+        }
+        addMsg(reply, 'ai');
+      }, 800);
+    }
+
+    sendBtn.addEventListener('click', handleSend);
+    input.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSend(); });
+  }
+
   // ===== INIT =====
   function init() {
     initParticles();
     initBreathing();
     initHero();
+    initBgm();
+    initChat();
   }
 
   return { init, updateBodyMap, updateForecast };
