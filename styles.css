@@ -69,9 +69,9 @@ body::before {
 .app-container {
   position: relative;
   z-index: 1;
-  max-width: 480px;
+  max-width: 640px;
   margin: 0 auto;
-  padding: 20px 16px 40px;
+  padding: 24px 20px 48px;
   min-height: 100vh;
 }
 
@@ -133,8 +133,8 @@ body::before {
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--border-glass);
   border-radius: var(--radius-lg);
-  padding: 24px;
-  margin-bottom: 16px;
+  padding: 28px;
+  margin-bottom: 20px;
   box-shadow: var(--shadow-card);
   transition: var(--transition);
 }
@@ -744,7 +744,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
-  max-width: 480px;
+  max-width: 640px;
   display: flex;
   justify-content: space-around;
   background: rgba(10, 14, 26, 0.92);
@@ -1114,6 +1114,193 @@ input[type="range"]::-webkit-slider-thumb:hover {
   animation: fadeSlideIn 0.4s ease;
 }
 
+/* ===== Particle Canvas ===== */
+#particle-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ===== Body Heatmap ===== */
+.bodymap-container { text-align: center; position: relative; }
+
+.bodymap-svg {
+  width: 180px;
+  height: auto;
+  margin: 0 auto;
+  display: block;
+  filter: drop-shadow(0 0 12px rgba(108,140,255,0.15));
+}
+
+.bm-part {
+  fill: rgba(108, 140, 255, 0.15);
+  stroke: rgba(108, 140, 255, 0.25);
+  stroke-width: 1;
+  transition: fill 0.6s ease, filter 0.6s ease;
+  cursor: pointer;
+}
+
+.bm-part.fatigue-low { fill: rgba(52, 211, 153, 0.35); stroke: rgba(52, 211, 153, 0.5); }
+.bm-part.fatigue-med { fill: rgba(251, 146, 60, 0.45); stroke: rgba(251, 146, 60, 0.6); filter: drop-shadow(0 0 4px rgba(251,146,60,0.3)); }
+.bm-part.fatigue-high { fill: rgba(244, 114, 182, 0.55); stroke: rgba(244, 114, 182, 0.7); filter: drop-shadow(0 0 8px rgba(244,114,182,0.4)); }
+
+.bodymap-legend {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.bm-legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--text-secondary); }
+.bm-dot { width: 10px; height: 10px; border-radius: 3px; }
+.bm-dot.bm-low { background: rgba(52, 211, 153, 0.5); }
+.bm-dot.bm-med { background: rgba(251, 146, 60, 0.6); }
+.bm-dot.bm-high { background: rgba(244, 114, 182, 0.7); }
+
+.bodymap-tooltip {
+  position: absolute;
+  background: rgba(10,14,26,0.9);
+  border: 1px solid var(--border-glass);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.75rem;
+  color: var(--text-primary);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+  z-index: 10;
+}
+
+.bodymap-tooltip.visible { opacity: 1; }
+
+/* ===== Breathing Exercise ===== */
+.breathing-container { text-align: center; padding: 8px 0; }
+
+.breathing-circle {
+  width: 160px;
+  height: 160px;
+  margin: 0 auto 16px;
+  position: relative;
+  border-radius: 50%;
+}
+
+.breathing-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.breathing-phase {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.breathing-count {
+  font-size: 2rem;
+  font-weight: 800;
+  background: var(--gradient-cool);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.breathing-ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.breathing-ring-bg { fill: none; stroke: rgba(56,189,248,0.1); stroke-width: 5; }
+.breathing-ring-progress {
+  fill: none;
+  stroke: url(#hydroGradient);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-dasharray: 565.49;
+  stroke-dashoffset: 565.49;
+  transition: stroke-dashoffset 0.5s ease;
+}
+
+.breathing-label {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-top: 8px;
+}
+
+.breathing-circle.inhale { animation: breatheIn 4s ease forwards; }
+.breathing-circle.exhale { animation: breatheOut 8s ease forwards; }
+
+@keyframes breatheIn {
+  from { transform: scale(0.85); }
+  to { transform: scale(1.1); }
+}
+
+@keyframes breatheOut {
+  from { transform: scale(1.1); }
+  to { transform: scale(0.85); }
+}
+
+/* ===== Forecast ===== */
+.forecast-display { text-align: center; padding: 8px 0; }
+
+.forecast-weather {
+  font-size: 4rem;
+  animation: gentleBounce 2.5s ease-in-out infinite;
+  margin-bottom: 4px;
+}
+
+.forecast-status {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+.forecast-score-bar { margin: 0 auto; max-width: 280px; }
+
+.forecast-bar-bg {
+  height: 8px;
+  background: rgba(108,140,255,0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.forecast-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--gradient-main);
+  width: 0%;
+  transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+}
+
+.forecast-score-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent-blue);
+  margin-top: 6px;
+}
+
+.forecast-advice {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-top: 14px;
+  line-height: 1.7;
+  padding: 12px;
+  background: rgba(108,140,255,0.05);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(108,140,255,0.08);
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 420px) {
   .app-container { padding: 12px 12px 30px; }
@@ -1121,4 +1308,5 @@ input[type="range"]::-webkit-slider-thumb:hover {
   .sleep-info-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
   .time-input { font-size: 1.5rem; width: 75px; padding: 8px 12px; }
   .badge-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .bodymap-svg { width: 140px; }
 }

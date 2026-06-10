@@ -408,6 +408,12 @@ document.addEventListener('DOMContentLoaded', () => {
         sleepDuration: sleep.duration,
       });
     }
+
+    // Update advanced features
+    if (typeof RecoverAdvanced !== 'undefined') {
+      RecoverAdvanced.updateBodyMap(fatigue);
+      RecoverAdvanced.updateForecast(fatigue, sleep);
+    }
   });
 
   els.btnReset.addEventListener('click', () => {
