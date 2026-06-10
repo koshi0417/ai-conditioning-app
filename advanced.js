@@ -8,7 +8,8 @@ const RecoverAdvanced = (() => {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     let particles = [];
-    const colors = ['rgba(108,140,255,0.3)', 'rgba(167,139,250,0.25)', 'rgba(56,189,248,0.2)', 'rgba(244,114,182,0.15)'];
+    // Light theme colors (subtle whites and very light blues/grays)
+    const colors = ['rgba(255,255,255,0.8)', 'rgba(163,177,198,0.4)', 'rgba(255,255,255,0.6)'];
 
     function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
     resize();
@@ -46,8 +47,8 @@ const RecoverAdvanced = (() => {
             ctx.beginPath();
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = `rgba(108,140,255,${0.06 * (1 - dist/120)})`;
-            ctx.lineWidth = 0.5;
+            ctx.strokeStyle = `rgba(255,255,255,${0.15 * (1 - dist/120)})`;
+            ctx.lineWidth = 1.0;
             ctx.stroke();
           }
         }
