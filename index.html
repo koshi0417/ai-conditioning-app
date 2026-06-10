@@ -168,7 +168,13 @@
     <!-- Screen 3: Result -->
     <section id="screen-result" class="screen">
       <!-- ★ NEW: BGM Control -->
-      <div style="display:flex; justify-content:flex-end; margin-bottom:12px;">
+      <div style="display:flex; justify-content:flex-end; align-items:center; gap:8px; margin-bottom:12px;">
+        <select id="bgm-type" style="background:rgba(255,255,255,0.08); color:white; border:1px solid var(--border-glass); border-radius:20px; padding:8px 12px; font-size:0.85rem; outline:none; cursor:pointer; font-family:inherit;">
+          <option value="waves" style="color:black;">🌊 波の音</option>
+          <option value="rain" style="color:black;">🌧️ 雨の音</option>
+          <option value="bowl" style="color:black;">🥣 シンギングボウル</option>
+          <option value="brown" style="color:black;">🍂 ブラウンノイズ</option>
+        </select>
         <button id="btn-bgm" class="btn-secondary" style="width:auto; padding:8px 16px; border-radius:20px; font-size:0.85rem; margin:0; display:flex; align-items:center; gap:6px;">
           <span id="bgm-icon">🔈</span> <span id="bgm-text">BGM オフ</span>
         </button>

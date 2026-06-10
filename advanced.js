@@ -306,58 +306,135 @@ const RecoverAdvanced = (() => {
   let audioCtx = null;
   let noiseNode = null;
   let gainNode = null;
+  let filterNode = null;
   let isBgmPlaying = false;
   let lastOut = 0;
+  let currentOscillators = [];
 
-  function initBgm() {
-    const btn = document.getElementById('btn-bgm');
-    if (!btn) return;
+  function stopCurrentBgm() {
+    if (gainNode) {
+      gainNode.gain.setTargetAtTime(0, audioCtx.currentTime, 0.5);
+      setTimeout(() => {
+        if (noiseNode) { noiseNode.stop(); noiseNode = null; }
+        currentOscillators.forEach(osc => {
+          try { osc.stop(); } catch(e){}
+        });
+        currentOscillators = [];
+      }, 1000);
+    }
+  }
 
-    btn.addEventListener('click', () => {
-      const icon = document.getElementById('bgm-icon');
-      const text = document.getElementById('bgm-text');
+  function playBgm(type) {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    stopCurrentBgm(); // fade out old one
 
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
+    setTimeout(() => {
+      gainNode = audioCtx.createGain();
+      gainNode.gain.value = 0;
+      gainNode.connect(audioCtx.destination);
 
-      if (isBgmPlaying) {
-        if (gainNode) {
-          gainNode.gain.setTargetAtTime(0, audioCtx.currentTime, 0.5);
-          setTimeout(() => { if (noiseNode) { noiseNode.stop(); noiseNode = null; } }, 1000);
-        }
-        isBgmPlaying = false;
-        icon.textContent = '🔈';
-        text.textContent = 'BGM オフ';
+      if (type === 'bowl') {
+        const freqs = [220, 222, 440, 443];
+        freqs.forEach(freq => {
+          const osc = audioCtx.createOscillator();
+          osc.type = 'sine';
+          osc.frequency.value = freq;
+          
+          const oscGain = audioCtx.createGain();
+          oscGain.gain.value = 0.15;
+          
+          const lfo = audioCtx.createOscillator();
+          lfo.type = 'sine';
+          lfo.frequency.value = 0.5 + Math.random() * 0.5;
+          const lfoGain = audioCtx.createGain();
+          lfoGain.gain.value = 0.1;
+          
+          lfo.connect(lfoGain);
+          lfoGain.connect(oscGain.gain);
+          
+          osc.connect(oscGain);
+          oscGain.connect(gainNode);
+          
+          osc.start();
+          lfo.start();
+          currentOscillators.push(osc, lfo);
+        });
       } else {
         const bufferSize = audioCtx.sampleRate * 2;
         const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
         const output = buffer.getChannelData(0);
+        
         for (let i = 0; i < bufferSize; i++) {
           const white = Math.random() * 2 - 1;
-          output[i] = (lastOut + (0.02 * white)) / 1.02;
-          lastOut = output[i];
-          output[i] *= 3.5;
+          if (type === 'brown' || type === 'rain') {
+            output[i] = (lastOut + (0.02 * white)) / 1.02;
+            lastOut = output[i];
+            output[i] *= 3.5;
+          } else {
+            output[i] = (lastOut + (0.02 * white)) / 1.02;
+            lastOut = output[i];
+            output[i] *= 3.5;
+          }
         }
         
         noiseNode = audioCtx.createBufferSource();
         noiseNode.buffer = buffer;
         noiseNode.loop = true;
 
-        const filter = audioCtx.createBiquadFilter();
-        filter.type = 'lowpass';
-        filter.frequency.value = 400;
+        filterNode = audioCtx.createBiquadFilter();
+        
+        if (type === 'waves') {
+          filterNode.type = 'lowpass';
+          filterNode.frequency.value = 400;
+          
+          const lfo = audioCtx.createOscillator();
+          lfo.frequency.value = 0.15;
+          const lfoGain = audioCtx.createGain();
+          lfoGain.gain.value = 300;
+          lfo.connect(lfoGain);
+          lfoGain.connect(filterNode.frequency);
+          lfo.start();
+          currentOscillators.push(lfo);
 
-        gainNode = audioCtx.createGain();
-        gainNode.gain.value = 0;
+        } else if (type === 'rain') {
+          filterNode.type = 'bandpass';
+          filterNode.frequency.value = 1000;
+          filterNode.Q.value = 0.5;
+        } else if (type === 'brown') {
+          filterNode.type = 'lowpass';
+          filterNode.frequency.value = 200;
+        }
 
-        noiseNode.connect(filter);
-        filter.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-
+        noiseNode.connect(filterNode);
+        filterNode.connect(gainNode);
         noiseNode.start();
-        gainNode.gain.setTargetAtTime(0.1, audioCtx.currentTime, 1.0);
+      }
 
+      gainNode.gain.setTargetAtTime(0.2, audioCtx.currentTime, 1.0);
+    }, 100);
+  }
+
+  function initBgm() {
+    const btn = document.getElementById('btn-bgm');
+    const select = document.getElementById('bgm-type');
+    if (!btn || !select) return;
+
+    select.addEventListener('change', () => {
+      if (isBgmPlaying) playBgm(select.value);
+    });
+
+    btn.addEventListener('click', () => {
+      const icon = document.getElementById('bgm-icon');
+      const text = document.getElementById('bgm-text');
+
+      if (isBgmPlaying) {
+        stopCurrentBgm();
+        isBgmPlaying = false;
+        icon.textContent = '🔈';
+        text.textContent = 'BGM オフ';
+      } else {
+        playBgm(select.value);
         isBgmPlaying = true;
         icon.textContent = '🔊';
         text.textContent = 'BGM オン';
