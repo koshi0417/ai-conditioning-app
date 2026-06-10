@@ -366,16 +366,7 @@ const RecoverAdvanced = (() => {
         const output = buffer.getChannelData(0);
         
         for (let i = 0; i < bufferSize; i++) {
-          const white = Math.random() * 2 - 1;
-          if (type === 'brown' || type === 'rain') {
-            output[i] = (lastOut + (0.02 * white)) / 1.02;
-            lastOut = output[i];
-            output[i] *= 3.5;
-          } else {
-            output[i] = (lastOut + (0.02 * white)) / 1.02;
-            lastOut = output[i];
-            output[i] *= 3.5;
-          }
+          output[i] = Math.random() * 2 - 1; // Pure white noise without state
         }
         
         noiseNode = audioCtx.createBufferSource();
@@ -386,24 +377,23 @@ const RecoverAdvanced = (() => {
         
         if (type === 'waves') {
           filterNode.type = 'lowpass';
-          filterNode.frequency.value = 400;
+          filterNode.frequency.value = 350; // slightly lower
           
           const lfo = audioCtx.createOscillator();
           lfo.frequency.value = 0.15;
           const lfoGain = audioCtx.createGain();
-          lfoGain.gain.value = 300;
+          lfoGain.gain.value = 250;
           lfo.connect(lfoGain);
           lfoGain.connect(filterNode.frequency);
           lfo.start();
           currentOscillators.push(lfo);
 
         } else if (type === 'rain') {
-          filterNode.type = 'bandpass';
-          filterNode.frequency.value = 1000;
-          filterNode.Q.value = 0.5;
+          filterNode.type = 'lowpass';
+          filterNode.frequency.value = 1200; // change bandpass to lowpass for better rain sound
         } else if (type === 'brown') {
           filterNode.type = 'lowpass';
-          filterNode.frequency.value = 200;
+          filterNode.frequency.value = 150; // deep brown noise
         }
 
         noiseNode.connect(filterNode);
