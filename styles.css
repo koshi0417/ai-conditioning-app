@@ -69,9 +69,10 @@ body::before {
 .app-container {
   position: relative;
   z-index: 1;
-  max-width: 640px;
+  max-width: 1400px;
+  width: 96%;
   margin: 0 auto;
-  padding: 24px 20px 48px;
+  padding: 30px 20px 80px;
   min-height: 100vh;
 }
 
@@ -959,7 +960,7 @@ input[type="range"]:active::-webkit-slider-thumb {
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
-  max-width: 640px;
+  max-width: 1400px;
   display: flex;
   justify-content: space-around;
   background: rgba(10, 14, 26, 0.92);
@@ -1517,7 +1518,28 @@ input[type="range"]:active::-webkit-slider-thumb {
 }
 
 /* ===== Responsive ===== */
-@media (max-width: 420px) {
+@media (min-width: 1024px) {
+  .app-container { padding: 40px 40px 100px; }
+  .input-grid { grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .glass-card { margin-bottom: 24px; }
+  .hero-card { grid-column: span 3; }
+  .btn-primary { font-size: 1.2rem; padding: 24px; letter-spacing: 2px; }
+  .preset-btn { font-size: 1rem; padding: 16px 12px; }
+  .preset-btn .preset-icon { font-size: 1.5rem; margin-bottom: 8px; }
+  .history-chart-container { height: 250px; }
+  .bar-chart { height: 200px; }
+  .bar-pair { height: 160px; gap: 8px; }
+  .bar { width: 30px; }
+}
+
+@media (max-width: 1023px) and (min-width: 600px) {
+  .input-grid { grid-template-columns: repeat(2, 1fr); }
+  .hero-card { grid-column: span 2; }
+}
+
+@media (max-width: 599px) {
+  .input-grid { grid-template-columns: 1fr; }
+  .hero-card { grid-column: span 1; }
   .app-container { padding: 12px 12px 30px; }
   .glass-card { padding: 18px; }
   .sleep-info-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
