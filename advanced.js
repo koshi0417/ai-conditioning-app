@@ -308,65 +308,39 @@ const RecoverAdvanced = (() => {
   let gainNode = null;
   let filterNode = null;
   let isBgmPlaying = false;
-  let lastOut = 0;
   let currentOscillators = [];
 
-  function stopCurrentBgm() {
-    if (gainNode) {
-      gainNode.gain.setTargetAtTime(0, audioCtx.currentTime, 0.5);
-      setTimeout(() => {
-        if (noiseNode) { noiseNode.stop(); noiseNode = null; }
-        currentOscillators.forEach(osc => {
-          try { osc.stop(); } catch(e){}
-        });
-        currentOscillators = [];
-      }, 1000);
-    }
-  }
+  function initBgm() {
+    const btn = document.getElementById('btn-bgm');
+    if (!btn) return;
 
-  function playBgm(type) {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    
-    stopCurrentBgm(); // fade out old one
+    btn.addEventListener('click', () => {
+      const icon = document.getElementById('bgm-icon');
+      const text = document.getElementById('bgm-text');
 
-    setTimeout(() => {
-      gainNode = audioCtx.createGain();
-      gainNode.gain.value = 0;
-      gainNode.connect(audioCtx.destination);
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
 
-      if (type === 'bowl') {
-        const freqs = [220, 222, 440, 443];
-        freqs.forEach(freq => {
-          const osc = audioCtx.createOscillator();
-          osc.type = 'sine';
-          osc.frequency.value = freq;
-          
-          const oscGain = audioCtx.createGain();
-          oscGain.gain.value = 0.15;
-          
-          const lfo = audioCtx.createOscillator();
-          lfo.type = 'sine';
-          lfo.frequency.value = 0.5 + Math.random() * 0.5;
-          const lfoGain = audioCtx.createGain();
-          lfoGain.gain.value = 0.1;
-          
-          lfo.connect(lfoGain);
-          lfoGain.connect(oscGain.gain);
-          
-          osc.connect(oscGain);
-          oscGain.connect(gainNode);
-          
-          osc.start();
-          lfo.start();
-          currentOscillators.push(osc, lfo);
-        });
+      if (isBgmPlaying) {
+        if (gainNode) {
+          gainNode.gain.setTargetAtTime(0, audioCtx.currentTime, 0.5);
+          setTimeout(() => {
+            if (noiseNode) { noiseNode.stop(); noiseNode = null; }
+            currentOscillators.forEach(osc => { try { osc.stop(); } catch(e){} });
+            currentOscillators = [];
+          }, 1000);
+        }
+        isBgmPlaying = false;
+        icon.textContent = '🔈';
+        text.textContent = 'BGM オフ';
       } else {
+        // Create pure white noise buffer
         const bufferSize = audioCtx.sampleRate * 2;
         const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
         const output = buffer.getChannelData(0);
-        
         for (let i = 0; i < bufferSize; i++) {
-          output[i] = Math.random() * 2 - 1; // Pure white noise without state
+          output[i] = Math.random() * 2 - 1;
         }
         
         noiseNode = audioCtx.createBufferSource();
@@ -374,57 +348,29 @@ const RecoverAdvanced = (() => {
         noiseNode.loop = true;
 
         filterNode = audioCtx.createBiquadFilter();
-        
-        if (type === 'waves') {
-          filterNode.type = 'lowpass';
-          filterNode.frequency.value = 350; // slightly lower
-          
-          const lfo = audioCtx.createOscillator();
-          lfo.frequency.value = 0.15;
-          const lfoGain = audioCtx.createGain();
-          lfoGain.gain.value = 250;
-          lfo.connect(lfoGain);
-          lfoGain.connect(filterNode.frequency);
-          lfo.start();
-          currentOscillators.push(lfo);
+        filterNode.type = 'lowpass';
+        filterNode.frequency.value = 350;
 
-        } else if (type === 'rain') {
-          filterNode.type = 'lowpass';
-          filterNode.frequency.value = 1200; // change bandpass to lowpass for better rain sound
-        } else if (type === 'brown') {
-          filterNode.type = 'lowpass';
-          filterNode.frequency.value = 150; // deep brown noise
-        }
+        // LFO for wave sound
+        const lfo = audioCtx.createOscillator();
+        lfo.frequency.value = 0.15;
+        const lfoGain = audioCtx.createGain();
+        lfoGain.gain.value = 250;
+        lfo.connect(lfoGain);
+        lfoGain.connect(filterNode.frequency);
+        lfo.start();
+        currentOscillators.push(lfo);
+
+        gainNode = audioCtx.createGain();
+        gainNode.gain.value = 0;
 
         noiseNode.connect(filterNode);
         filterNode.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
         noiseNode.start();
-      }
+        gainNode.gain.setTargetAtTime(0.2, audioCtx.currentTime, 1.0);
 
-      gainNode.gain.setTargetAtTime(0.2, audioCtx.currentTime, 1.0);
-    }, 100);
-  }
-
-  function initBgm() {
-    const btn = document.getElementById('btn-bgm');
-    const select = document.getElementById('bgm-type');
-    if (!btn || !select) return;
-
-    select.addEventListener('change', () => {
-      if (isBgmPlaying) playBgm(select.value);
-    });
-
-    btn.addEventListener('click', () => {
-      const icon = document.getElementById('bgm-icon');
-      const text = document.getElementById('bgm-text');
-
-      if (isBgmPlaying) {
-        stopCurrentBgm();
-        isBgmPlaying = false;
-        icon.textContent = '🔈';
-        text.textContent = 'BGM オフ';
-      } else {
-        playBgm(select.value);
         isBgmPlaying = true;
         icon.textContent = '🔊';
         text.textContent = 'BGM オン';
