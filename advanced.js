@@ -285,7 +285,9 @@ const RecoverAdvanced = (() => {
 
     // Show last score from localStorage
     try {
-      const data = JSON.parse(localStorage.getItem('recoverAI')) || {};
+      const data = RecoverFeatures && typeof RecoverFeatures.getCurrentUser === 'function' 
+        ? window.RecoverFeatures.getAllUsers()[window.RecoverFeatures.getCurrentUser()]
+        : JSON.parse(localStorage.getItem('recoverAI')) || {};
       const logs = data.logs || [];
       if (logs.length > 0) {
         const last = logs[0];

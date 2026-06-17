@@ -12,10 +12,16 @@
 
 <div class="app-container">
   <!-- ===== Header ===== -->
-  <header class="app-header">
+  <header class="app-header" style="position: relative;">
     <div class="app-logo" id="app-logo">🌙</div>
     <h1 class="app-title">Recover AI</h1>
     <p class="app-subtitle">今日の疲れを、たった3分でリセット</p>
+    
+    <!-- ★ NEW: アカウント切り替えボタン -->
+    <div id="user-profile-btn" style="position: absolute; top: 16px; right: 20px; display: flex; align-items: center; gap: 8px; cursor: pointer; background: var(--bg-primary); padding: 6px 12px; border-radius: 20px; box-shadow: var(--shadow-out-sm); transition: transform 0.2s;">
+      <span style="font-size: 1.2rem;">👤</span>
+      <span id="current-user-name" style="font-size: 0.85rem; font-weight: bold; color: var(--text-primary);">メインユーザー</span>
+    </div>
   </header>
 
   <!-- ===== Bottom Navigation ===== -->
@@ -549,6 +555,28 @@
   <div class="chat-input-area">
     <input type="text" id="chat-input" class="chat-input" placeholder="メッセージを入力...">
     <button class="chat-send" id="chat-send">▶</button>
+  </div>
+</div>
+
+</div>
+
+<!-- ★ NEW: User Profile Modal -->
+<div id="user-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-primary); z-index: 9999; justify-content: center; align-items: center; flex-direction: column;">
+  <div class="glass-card" style="width: 90%; max-width: 400px; text-align: center; padding: 40px 24px; position: relative;">
+    <button onclick="document.getElementById('user-modal').style.display='none'" style="position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted);">✖</button>
+    <h2 style="font-size: 1.5rem; margin-bottom: 24px; color: var(--text-primary);">誰が使いますか？</h2>
+    
+    <div id="user-list" style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px;">
+      <!-- ユーザーリストが動的に入る -->
+    </div>
+
+    <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.5);">
+      <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 12px;">新しいプロフィールを作成</p>
+      <div style="display: flex; gap: 8px;">
+        <input type="text" id="new-user-name" placeholder="お名前" style="flex: 1; padding: 12px; border-radius: 12px; background: var(--bg-primary); box-shadow: var(--shadow-in-sm); border: none; color: var(--text-primary); outline: none;">
+        <button id="btn-add-user" class="btn-primary" style="padding: 12px 20px; font-size: 1rem; box-shadow: var(--shadow-out-sm) !important; flex: none;">追加</button>
+      </div>
+    </div>
   </div>
 </div>
 

@@ -1,15 +1,78 @@
 // ===== Recover AI - New Features (History, Badges, Hydration) =====
 
 const RecoverFeatures = (() => {
-  const STORAGE_KEY = 'recoverAI';
+  const USERS_KEY = 'recoverAI_users';
+  const CURRENT_USER_KEY = 'recoverAI_currentUser';
   const areaNames = { eyes:'目', neck_shoulder:'首・肩', lower_back:'腰', legs:'足', full_body:'全身' };
 
-  function loadData() {
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || getDefault(); }
-    catch { return getDefault(); }
-  }
-  function saveData(d) { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); }
   function getDefault() { return { logs:[], hydrationToday:0, hydrationDate:null, reminderOn:false }; }
+
+  // Migration: old recoverAI to multi-user
+  function migrateOldData() {
+    const old = localStorage.getItem('recoverAI');
+    if (old) {
+      try {
+        const users = { "メインユーザー": JSON.parse(old) };
+        localStorage.setItem(USERS_KEY, JSON.stringify(users));
+        localStorage.setItem(CURRENT_USER_KEY, "メインユーザー");
+        localStorage.removeItem('recoverAI');
+      } catch(e) {}
+    }
+  }
+  migrateOldData();
+
+  function getCurrentUser() {
+    return localStorage.getItem(CURRENT_USER_KEY) || "メインユーザー";
+  }
+
+  function getAllUsers() {
+    try {
+       const u = JSON.parse(localStorage.getItem(USERS_KEY));
+       if (!u || Object.keys(u).length === 0) return { "メインユーザー": getDefault() };
+       return u;
+    } catch { return { "メインユーザー": getDefault() }; }
+  }
+
+  function saveAllUsers(users) {
+    localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  }
+
+  function loadData() {
+    const users = getAllUsers();
+    const user = getCurrentUser();
+    if (!users[user]) users[user] = getDefault();
+    return users[user];
+  }
+
+  function saveData(d) {
+    const users = getAllUsers();
+    const user = getCurrentUser();
+    users[user] = d;
+    saveAllUsers(users);
+  }
+
+  function switchUser(name) {
+    localStorage.setItem(CURRENT_USER_KEY, name);
+    // Refresh all data
+    renderHistory();
+    renderBadges();
+    initHydration();
+    // Update hero if app is active
+    if (typeof window.RecoverAdvanced !== 'undefined' && window.RecoverAdvanced.initHero) {
+      window.RecoverAdvanced.initHero();
+    }
+  }
+
+  function createNewUser(name) {
+    if (!name.trim()) return false;
+    const users = getAllUsers();
+    if (users[name]) return false; // Already exists
+    users[name] = getDefault();
+    saveAllUsers(users);
+    switchUser(name);
+    return true;
+  }
+
   function todayStr() { return new Date().toISOString().slice(0,10); }
 
   // ===== HISTORY =====
@@ -260,10 +323,87 @@ const RecoverFeatures = (() => {
       Notification.requestPermission();
     }
 
+    initUserUI();
     renderHydration();
   }
 
-  return { init, saveLog, renderHistory, renderBadges, renderHydration };
+  function initUserUI() {
+    const modal = document.getElementById('user-modal');
+    const userList = document.getElementById('user-list');
+    const newUserNameInput = document.getElementById('new-user-name');
+    const btnAddUser = document.getElementById('btn-add-user');
+    const headerUserName = document.getElementById('current-user-name');
+    const profileBtn = document.getElementById('user-profile-btn');
+
+    function renderUserList() {
+      const users = getAllUsers();
+      const current = getCurrentUser();
+      
+      if (headerUserName) headerUserName.textContent = current;
+      
+      if (userList) {
+        userList.innerHTML = '';
+        Object.keys(users).forEach(name => {
+          const btn = document.createElement('button');
+          btn.className = 'btn-secondary';
+          btn.style.cssText = `width: 100%; padding: 16px; font-size: 1.1rem; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-out-sm) !important; background: var(--bg-primary) !important; color: var(--text-primary) !important; border: none !important; margin-bottom: 8px;`;
+          
+          if (name === current) {
+            btn.innerHTML = `<span>👤 ${name}</span> <span style="font-size: 0.8rem; color: var(--accent-blue);">選択中</span>`;
+            btn.style.boxShadow = 'var(--shadow-in-sm) !important';
+          } else {
+            btn.innerHTML = `<span>👤 ${name}</span>`;
+          }
+
+          btn.onclick = () => {
+            switchUser(name);
+            modal.style.display = 'none';
+            if (headerUserName) headerUserName.textContent = name;
+          };
+          userList.appendChild(btn);
+        });
+      }
+    }
+
+    if (profileBtn) {
+      profileBtn.onclick = () => {
+        renderUserList();
+        modal.style.display = 'flex';
+      };
+    }
+
+    if (btnAddUser) {
+      btnAddUser.onclick = () => {
+        const name = newUserNameInput.value;
+        if (createNewUser(name)) {
+          newUserNameInput.value = '';
+          modal.style.display = 'none';
+          if (headerUserName) headerUserName.textContent = name;
+        } else {
+          alert('名前を入力してください。または既に存在する名前です。');
+        }
+      };
+    }
+
+    // 初回レンダリング
+    renderUserList();
+
+    // アプリ起動時に選択画面を出す（必要であれば。今回は簡易にするため出さないか、切り替えボタンだけ）
+    // セッションストレージで「初回表示」を判定することも可能ですが、
+    // ここでは切り替えボタンからの操作のみとします。
+  }
+
+  return { 
+    init, 
+    saveLog, 
+    renderHistory, 
+    renderBadges, 
+    renderHydration,
+    getCurrentUser,
+    getAllUsers,
+    switchUser,
+    createNewUser
+  };
 })();
 
 document.addEventListener('DOMContentLoaded', () => RecoverFeatures.init());
