@@ -21,6 +21,30 @@ const RecoverFeatures = (() => {
   }
   migrateOldData();
 
+  // ★ NEW: Sync Data from URL (Import)
+  function importDataFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    const syncData = params.get('sync');
+    if (syncData) {
+      try {
+        const decoded = decodeURIComponent(escape(window.atob(syncData)));
+        const importedUsers = JSON.parse(decoded);
+        if (typeof importedUsers === 'object') {
+          localStorage.setItem(USERS_KEY, JSON.stringify(importedUsers));
+          const firstUser = Object.keys(importedUsers)[0] || "メインユーザー";
+          localStorage.setItem(CURRENT_USER_KEY, firstUser);
+          alert('端末のデータを正常に同期（上書き）しました！');
+        }
+      } catch (e) {
+        console.error('Data import failed', e);
+        alert('データの同期に失敗しました。');
+      }
+      // Remove query param from URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }
+  importDataFromUrl();
+
   function getCurrentUser() {
     return localStorage.getItem(CURRENT_USER_KEY) || "メインユーザー";
   }
@@ -71,6 +95,45 @@ const RecoverFeatures = (() => {
     saveAllUsers(users);
     switchUser(name);
     return true;
+  }
+
+  // ★ NEW: Generate QR Code for Mobile Sync
+  function showSyncQR() {
+    const users = getAllUsers();
+    const compressed = {};
+    for (const [name, data] of Object.entries(users)) {
+      compressed[name] = {
+        ...data,
+        logs: (data.logs || []).slice(0, 15) // Keep only latest 15 logs to prevent QR overflow
+      };
+    }
+    
+    try {
+      const jsonStr = JSON.stringify(compressed);
+      const base64 = window.btoa(unescape(encodeURIComponent(jsonStr)));
+      
+      const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      // If localhost, QR sync might not work on actual mobile without local network IP, 
+      // but we will generate it anyway.
+      const syncUrl = window.location.origin + window.location.pathname + '?sync=' + base64;
+      
+      const canvas = document.getElementById('qr-canvas');
+      if (typeof QRious !== 'undefined' && canvas) {
+        new QRious({
+          element: canvas,
+          value: syncUrl,
+          size: 250,
+          background: 'white',
+          foreground: 'black'
+        });
+        document.getElementById('sync-modal').style.display = 'flex';
+      } else {
+        alert('QRコードライブラリの読み込みに失敗しました。');
+      }
+    } catch(e) {
+      console.error(e);
+      alert('データが大きすぎてQRコードを生成できませんでした。');
+    }
   }
 
   function todayStr() { return new Date().toISOString().slice(0,10); }
@@ -334,6 +397,13 @@ const RecoverFeatures = (() => {
     const btnAddUser = document.getElementById('btn-add-user');
     const headerUserName = document.getElementById('current-user-name');
     const profileBtn = document.getElementById('user-profile-btn');
+    const syncBtn = document.getElementById('btn-sync-mobile');
+
+    if (syncBtn) {
+      syncBtn.onclick = () => {
+        showSyncQR();
+      };
+    }
 
     function renderUserList() {
       const users = getAllUsers();

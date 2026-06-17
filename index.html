@@ -6,6 +6,8 @@
   <meta name="description" content="その日の活動量から最適なリカバリストレッチと翌朝のスケジュールを提案するAIコンディショニングアプリ" />
   <title>Recover AI — 3分リカバリコンディショニング</title>
   <link rel="stylesheet" href="styles.css" />
+  <!-- QR Code Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
 </head>
 <body>
 <canvas id="particle-canvas"></canvas>
@@ -17,10 +19,17 @@
     <h1 class="app-title">Recover AI</h1>
     <p class="app-subtitle">今日の疲れを、たった3分でリセット</p>
     
-    <!-- ★ NEW: アカウント切り替えボタン -->
-    <div id="user-profile-btn" style="position: absolute; top: 16px; right: 20px; display: flex; align-items: center; gap: 8px; cursor: pointer; background: var(--bg-primary); padding: 6px 12px; border-radius: 20px; box-shadow: var(--shadow-out-sm); transition: transform 0.2s;">
-      <span style="font-size: 1.2rem;">👤</span>
-      <span id="current-user-name" style="font-size: 0.85rem; font-weight: bold; color: var(--text-primary);">メインユーザー</span>
+    <!-- アカウント＆同期 ボタングループ -->
+    <div style="position: absolute; top: 16px; right: 20px; display: flex; gap: 8px;">
+      <!-- スマホ同期ボタン -->
+      <button id="btn-sync-mobile" style="display: flex; align-items: center; justify-content: center; background: var(--bg-primary); padding: 6px; border-radius: 50%; box-shadow: var(--shadow-out-sm); border: none; cursor: pointer; transition: transform 0.2s; width: 36px; height: 36px;">
+        <span style="font-size: 1.1rem;">📱</span>
+      </button>
+      <!-- アカウント切り替えボタン -->
+      <div id="user-profile-btn" style="display: flex; align-items: center; gap: 8px; cursor: pointer; background: var(--bg-primary); padding: 6px 12px; border-radius: 20px; box-shadow: var(--shadow-out-sm); transition: transform 0.2s;">
+        <span style="font-size: 1.2rem;">👤</span>
+        <span id="current-user-name" style="font-size: 0.85rem; font-weight: bold; color: var(--text-primary);">メインユーザー</span>
+      </div>
     </div>
   </header>
 
@@ -577,6 +586,21 @@
         <button id="btn-add-user" class="btn-primary" style="padding: 12px 20px; font-size: 1rem; box-shadow: var(--shadow-out-sm) !important; flex: none;">追加</button>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- ★ NEW: Sync Mobile Modal -->
+<div id="sync-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-primary); z-index: 9999; justify-content: center; align-items: center; flex-direction: column;">
+  <div class="glass-card" style="width: 90%; max-width: 350px; text-align: center; padding: 40px 24px; position: relative;">
+    <button onclick="document.getElementById('sync-modal').style.display='none'" style="position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted);">✖</button>
+    <h2 style="font-size: 1.3rem; margin-bottom: 16px; color: var(--text-primary);">📱 スマホへデータを同期</h2>
+    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 24px;">このQRコードをスマホのカメラで読み取ると、現在のデータ（最新の履歴と水分量など）がスマホ側にコピーされます。</p>
+    
+    <div style="background: white; padding: 16px; border-radius: 12px; display: inline-block; margin-bottom: 24px; box-shadow: var(--shadow-in-sm);">
+      <canvas id="qr-canvas"></canvas>
+    </div>
+    
+    <p style="font-size: 0.75rem; color: var(--accent-pink);">※スマホ側の現在のデータは上書きされます</p>
   </div>
 </div>
 
