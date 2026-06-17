@@ -56,7 +56,7 @@ const RecoverFeatures = (() => {
     // Refresh all data
     renderHistory();
     renderBadges();
-    initHydration();
+    renderHydration();
     // Update hero if app is active
     if (typeof window.RecoverAdvanced !== 'undefined' && window.RecoverAdvanced.initHero) {
       window.RecoverAdvanced.initHero();
