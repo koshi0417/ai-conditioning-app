@@ -355,9 +355,11 @@ const RecoverFeatures = (() => {
         btn.classList.add('active');
         const tab = document.getElementById('tab-' + btn.dataset.tab);
         if (tab) tab.classList.add('active');
-        if (btn.dataset.tab === 'history') renderHistory();
-        if (btn.dataset.tab === 'badges') renderBadges();
+        if (btn.dataset.tab === 'history') { renderHistory(); if (typeof RecoverExtras !== 'undefined') RecoverExtras.renderJournalSection(); }
+        if (btn.dataset.tab === 'badges') { renderBadges(); if (typeof RecoverExtras !== 'undefined') RecoverExtras.renderWeeklyReport(); }
         if (btn.dataset.tab === 'hydration') renderHydration();
+        if (btn.dataset.tab === 'diary' && typeof RecoverExtras !== 'undefined') RecoverExtras.renderMoodTab();
+        if (btn.dataset.tab === 'challenge' && typeof RecoverExtras !== 'undefined') RecoverExtras.renderChallengeTab();
       });
     });
 

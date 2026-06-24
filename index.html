@@ -39,6 +39,14 @@
       <span class="nav-icon">🏠</span>
       <span class="nav-label">ホーム</span>
     </button>
+    <button class="nav-btn" data-tab="diary">
+      <span class="nav-icon">🌡️</span>
+      <span class="nav-label">日記</span>
+    </button>
+    <button class="nav-btn" data-tab="challenge">
+      <span class="nav-icon">🎯</span>
+      <span class="nav-label">挑戦</span>
+    </button>
     <button class="nav-btn" data-tab="history">
       <span class="nav-icon">📊</span>
       <span class="nav-label">履歴</span>
@@ -446,7 +454,144 @@
       </div>
     </div>
 
+    <!-- ★ NEW: ジャーナル（メモ）セクション -->
+    <div class="glass-card">
+      <div class="card-header">
+        <div class="card-icon green">📝</div>
+        <div>
+          <div class="card-title">今日の気づきメモ</div>
+          <div class="card-description">自由に記録して振り返りに活用</div>
+        </div>
+      </div>
+      <div class="journal-input-area">
+        <textarea id="journal-textarea" class="journal-textarea" placeholder="今日の気づきや感想を自由に書いてください..." rows="3"></textarea>
+        <button class="btn-primary" id="btn-save-journal" style="margin-top:8px;">💾 メモを保存</button>
+      </div>
+      <div id="journal-list" class="journal-list"></div>
+    </div>
+
     <button class="btn-secondary" id="btn-clear-history" style="margin-top:8px;">🗑️ 履歴をクリア</button>
+  </div>
+
+  <!-- ===== Tab: Diary (Mood & Stress) ===== -->
+  <div id="tab-diary" class="tab-content">
+    <div class="glass-card">
+      <div class="card-header">
+        <div class="card-icon pink">🌡️</div>
+        <div>
+          <div class="card-title">今日の気分を記録</div>
+          <div class="card-description">毎日の気分とストレスレベルを追跡</div>
+        </div>
+      </div>
+      <!-- 気分セレクター -->
+      <div class="mood-selector" id="mood-selector">
+        <button class="mood-btn" data-mood="😫" data-value="1"><span class="mood-emoji">😫</span><span class="mood-label">最悪</span></button>
+        <button class="mood-btn" data-mood="😔" data-value="2"><span class="mood-emoji">😔</span><span class="mood-label">悪い</span></button>
+        <button class="mood-btn" data-mood="😐" data-value="3"><span class="mood-emoji">😐</span><span class="mood-label">普通</span></button>
+        <button class="mood-btn" data-mood="🙂" data-value="4"><span class="mood-emoji">🙂</span><span class="mood-label">良い</span></button>
+        <button class="mood-btn" data-mood="😊" data-value="5"><span class="mood-emoji">😊</span><span class="mood-label">最高</span></button>
+      </div>
+      <!-- ストレスレベル -->
+      <div class="input-group" style="margin-top:16px;">
+        <div class="input-label">
+          <span class="input-label-text">ストレスレベル</span>
+          <span class="input-value" id="stress-level-val">3</span>
+        </div>
+        <div class="slider-container">
+          <input type="range" id="stress-level" min="1" max="5" value="3" step="1" />
+          <div class="slider-labels"><span>低い</span><span>普通</span><span>高い</span></div>
+        </div>
+      </div>
+      <!-- ひとことメモ -->
+      <div style="margin-top:12px;">
+        <textarea id="mood-note" class="journal-textarea" placeholder="今日の気分についてひとこと（任意）" rows="2"></textarea>
+      </div>
+      <button class="btn-primary" id="btn-save-mood" style="margin-top:12px;">🌡️ 今日の気分を保存</button>
+    </div>
+
+    <!-- 気分トレンドグラフ -->
+    <div class="glass-card">
+      <div class="card-header">
+        <div class="card-icon lavender">📈</div>
+        <div>
+          <div class="card-title">週間メンタルトレンド</div>
+          <div class="card-description">直近7日間の気分とストレスの変化</div>
+        </div>
+      </div>
+      <div class="mood-chart-container">
+        <div class="mood-chart" id="mood-chart"></div>
+        <div class="chart-legend">
+          <span class="legend-item"><span class="legend-dot" style="background:var(--accent-green)"></span>気分</span>
+          <span class="legend-item"><span class="legend-dot" style="background:var(--accent-pink)"></span>ストレス</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 気分履歴リスト -->
+    <div class="glass-card">
+      <div class="card-header">
+        <div class="card-icon cyan">📋</div>
+        <div>
+          <div class="card-title">気分の記録一覧</div>
+          <div class="card-description">過去の気分を振り返る</div>
+        </div>
+      </div>
+      <div id="mood-history-list" class="mood-history-list">
+        <div class="history-empty">
+          <span style="font-size:2rem;">🌡️</span>
+          <p>まだ気分の記録がありません</p>
+          <p class="text-muted">上のボタンから今日の気分を記録しましょう</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Tab: Challenge (Daily Challenge) ===== -->
+  <div id="tab-challenge" class="tab-content">
+    <div class="glass-card">
+      <div class="card-header">
+        <div class="card-icon orange">🎯</div>
+        <div>
+          <div class="card-title">今日のデイリーチャレンジ</div>
+          <div class="card-description">3つのミッションをクリアしよう</div>
+        </div>
+      </div>
+      <!-- チャレンジ進捗リング -->
+      <div class="challenge-progress-container">
+        <svg class="challenge-ring" viewBox="0 0 120 120">
+          <defs>
+            <linearGradient id="challengeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#34d399"/>
+              <stop offset="50%" stop-color="#38bdf8"/>
+              <stop offset="100%" stop-color="#6c8cff"/>
+            </linearGradient>
+          </defs>
+          <circle class="challenge-ring-bg" cx="60" cy="60" r="52"/>
+          <circle class="challenge-ring-fill" id="challenge-progress-ring" cx="60" cy="60" r="52"/>
+        </svg>
+        <div class="challenge-progress-text">
+          <div class="challenge-progress-num" id="challenge-progress-num">0/3</div>
+          <div class="challenge-progress-label">完了</div>
+        </div>
+      </div>
+      <!-- チャレンジリスト -->
+      <div id="challenge-list" class="challenge-list"></div>
+    </div>
+
+    <!-- チャレンジ連続記録 -->
+    <div class="glass-card">
+      <div class="card-header">
+        <div class="card-icon green">🔥</div>
+        <div>
+          <div class="card-title">チャレンジ連続記録</div>
+          <div class="card-description">毎日全クリアを目指そう</div>
+        </div>
+      </div>
+      <div class="streak-display">
+        <div class="streak-number" id="challenge-streak-count">0</div>
+        <div class="streak-label">日連続全クリア</div>
+      </div>
+    </div>
   </div>
 
   <!-- ===== Tab: Badges ===== -->
@@ -475,6 +620,23 @@
         </div>
       </div>
       <div class="badge-grid" id="badge-grid"></div>
+    </div>
+
+    <!-- ★ NEW: 週間レポート -->
+    <div class="glass-card weekly-report-card">
+      <div class="card-header">
+        <div class="card-icon blue">🏋️</div>
+        <div>
+          <div class="card-title">週間レポート</div>
+          <div class="card-description">今週のあなたのまとめ</div>
+        </div>
+      </div>
+      <div id="weekly-report-content" class="weekly-report-content">
+        <div class="history-empty">
+          <span style="font-size:2rem;">📊</span>
+          <p>データが集まるとレポートが生成されます</p>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -607,5 +769,6 @@
 <script src="app.js"></script>
 <script src="features.js"></script>
 <script src="advanced.js"></script>
+<script src="extras.js"></script>
 </body>
 </html>
