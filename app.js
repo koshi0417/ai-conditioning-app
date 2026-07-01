@@ -52,12 +52,12 @@ document.addEventListener('DOMContentLoaded', () => {
       subtitle: '今日の疲れを、たった3分でリセット',
       logo: '🌙',
       heroMsg: '今日の活動を記録して、最適なリカバリプランを作りましょう',
-      exIcon: '🏃', exTitle: '運動量', exLabel: '運動時間', exIntensityLabel: '運動強度',
+      exIcon: '💼', exTitle: '業務・作業', exLabel: '稼働時間（移動等含む）', exIntensityLabel: '業務ハードさ',
       deskIcon: '💻', deskTitle: 'デスクワーク',
-      deskLabel: 'PC時間', deskUnit: '時間', deskMax: 14, deskStep: 1, deskLabels: ['0', '7h', '14h'],
+      deskLabel: 'PC作業時間', deskUnit: '時間', deskMax: 14, deskStep: 1, deskLabels: ['0', '7h', '14h'],
       exIntensityTexts: ['軽い', '普通', 'ハード'],
-      exIntensityIcons: ['🚶', '🏃', '🔥'],
-      deskIntensityLabel: '集中度',
+      exIntensityIcons: ['🚶', '💼', '🏃'],
+      deskIntensityLabel: '集中度・ストレス',
       deskIntensityTexts: ['軽い', '普通', 'ヘビー'],
       deskIntensityIcons: ['📖', '📝', '🧠'],
       analyzeBtn: '🔍 AIで今日のリカバリを分析'
@@ -534,6 +534,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  function initModeSelectionModal() {
+    const overlay = document.getElementById('mode-selection-overlay');
+    const btnGen = document.getElementById('btn-mode-general');
+    const btnRug = document.getElementById('btn-mode-rugby');
+    
+    // Check if user has selected a mode in localStorage
+    const hasSelected = localStorage.getItem('recoverAI_mode_selected');
+    
+    if (!hasSelected && overlay) {
+      overlay.style.display = 'flex';
+      // Disable background scrolling
+      document.body.style.overflow = 'hidden';
+      
+      const selectMode = (mode) => {
+        if (typeof RecoverFeatures !== 'undefined') {
+          RecoverFeatures.setAppMode(mode);
+        }
+        localStorage.setItem('recoverAI_mode_selected', 'true');
+        overlay.style.display = 'none';
+        document.body.style.overflow = '';
+      };
+      
+      if (btnGen) btnGen.addEventListener('click', () => selectMode('general'));
+      if (btnRug) btnRug.addEventListener('click', () => selectMode('rugby'));
+    }
+  }
+
   function init() {
     setupInputListeners();
     applyAppMode();
@@ -544,6 +571,7 @@ document.addEventListener('DOMContentLoaded', () => {
       modeSelector.addEventListener('change', (e) => {
         if (typeof RecoverFeatures !== 'undefined') {
           RecoverFeatures.setAppMode(e.target.value);
+          localStorage.setItem('recoverAI_mode_selected', 'true'); // Mode selected manually
           if (document.getElementById('screen-result').classList.contains('active')) {
             analyze();
           }
@@ -552,6 +580,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (els.btnAnalyze) els.btnAnalyze.addEventListener('click', analyze);
+    
+    // Show modal if needed
+    initModeSelectionModal();
   }
 
   els.btnSkip.addEventListener('click', () => nextStep());
