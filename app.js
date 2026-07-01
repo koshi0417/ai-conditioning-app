@@ -602,30 +602,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function renderRugbyMenus() {
-    const list = document.getElementById('rugby-menu-list');
+  function updateRugbySummary() {
     const summary = document.getElementById('rugby-menu-summary');
     const totalSpan = document.getElementById('rugby-menu-total-time');
-    if(!list || !summary || !totalSpan) return;
-    
-    list.innerHTML = '';
+    if(!summary || !totalSpan) return;
+
     let totalTime = 0;
-    
-    rugbyMenus.forEach((menu, index) => {
+    rugbyMenus.forEach(menu => {
       totalTime += menu.time;
-      const item = document.createElement('div');
-      item.className = 'rugby-menu-item';
-      item.innerHTML = `
-        <input type="text" placeholder="メニュー名(例: ユニット)" value="${menu.name}" data-index="${index}" class="menu-name">
-        <input type="number" min="0" step="5" placeholder="分" value="${menu.time}" data-index="${index}" class="menu-time">
-        <select data-index="${index}" class="menu-intensity">
-          <option value="light" ${menu.intensity === 'light' ? 'selected' : ''}>軽め</option>
-          <option value="moderate" ${menu.intensity === 'moderate' ? 'selected' : ''}>普通</option>
-          <option value="intense" ${menu.intensity === 'intense' ? 'selected' : ''}>ハード</option>
-        </select>
-        <button class="btn-delete-menu" data-index="${index}">🗑️</button>
-      `;
-      list.appendChild(item);
     });
 
     if (rugbyMenus.length > 0) {
@@ -643,6 +627,31 @@ document.addEventListener('DOMContentLoaded', () => {
       const unit = mode === 'rugby' ? '分' : '時間';
       document.getElementById('exercise-time-val').textContent = `${els.exerciseTime.value}${unit}`;
     }
+  }
+
+  function renderRugbyMenus() {
+    const list = document.getElementById('rugby-menu-list');
+    if(!list) return;
+    
+    list.innerHTML = '';
+    
+    rugbyMenus.forEach((menu, index) => {
+      const item = document.createElement('div');
+      item.className = 'rugby-menu-item';
+      item.innerHTML = `
+        <input type="text" placeholder="メニュー名(例: ユニット)" value="${menu.name}" data-index="${index}" class="menu-name">
+        <input type="number" min="0" step="5" placeholder="分" value="${menu.time}" data-index="${index}" class="menu-time">
+        <select data-index="${index}" class="menu-intensity">
+          <option value="light" ${menu.intensity === 'light' ? 'selected' : ''}>軽め</option>
+          <option value="moderate" ${menu.intensity === 'moderate' ? 'selected' : ''}>普通</option>
+          <option value="intense" ${menu.intensity === 'intense' ? 'selected' : ''}>ハード</option>
+        </select>
+        <button class="btn-delete-menu" data-index="${index}">🗑️</button>
+      `;
+      list.appendChild(item);
+    });
+
+    updateRugbySummary();
 
     list.querySelectorAll('.menu-name').forEach(el => {
       el.addEventListener('input', (e) => { rugbyMenus[e.target.dataset.index].name = e.target.value; });
@@ -650,13 +659,13 @@ document.addEventListener('DOMContentLoaded', () => {
     list.querySelectorAll('.menu-time').forEach(el => {
       el.addEventListener('input', (e) => {
         rugbyMenus[e.target.dataset.index].time = parseInt(e.target.value) || 0;
-        renderRugbyMenus();
+        updateRugbySummary();
       });
     });
     list.querySelectorAll('.menu-intensity').forEach(el => {
       el.addEventListener('change', (e) => {
         rugbyMenus[e.target.dataset.index].intensity = e.target.value;
-        renderRugbyMenus(); // 再計算用に再描画
+        updateRugbySummary();
       });
     });
     list.querySelectorAll('.btn-delete-menu').forEach(el => {
