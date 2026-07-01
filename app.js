@@ -45,8 +45,149 @@ document.addEventListener('DOMContentLoaded', () => {
   let isTimerRunning = false;
   let stretchPlan = [];
 
+  // ----- UI Texts Dictionary -----
+  const uiTexts = {
+    general: {
+      title: 'Recover AI',
+      subtitle: '今日の疲れを、たった3分でリセット',
+      logo: '🌙',
+      heroMsg: '今日の活動を記録して、最適なリカバリプランを作りましょう',
+      exIcon: '🏃', exTitle: '運動量',
+      deskIcon: '💻', deskTitle: 'デスクワーク',
+      deskLabel: 'PC時間', deskUnit: '時間', deskMax: 14, deskStep: 1, deskLabels: ['0', '7h', '14h'],
+      exIntensityTexts: ['軽い', '普通', 'ハード'],
+      exIntensityIcons: ['🚶', '🏃', '🔥'],
+      deskIntensityLabel: '集中度',
+      deskIntensityTexts: ['軽い', '普通', 'ヘビー'],
+      deskIntensityIcons: ['📖', '📝', '🧠'],
+      analyzeBtn: '🔍 AIで今日のリカバリを分析'
+    },
+    rugby: {
+      title: 'Recover AI 🏉 Rugby Edition',
+      subtitle: '練習後の疲れを、3分でリセット 🏉',
+      logo: '🏉',
+      heroMsg: '今日の練習を記録して、最適なリカバリプランを作りましょう',
+      exIcon: '🏉', exTitle: '練習・試合',
+      deskIcon: '💥', deskTitle: 'コンタクト強度',
+      deskLabel: 'タックル・ヒット回数（目安）', deskUnit: '回', deskMax: 30, deskStep: 1, deskLabels: ['0', '15', '30'],
+      exIntensityTexts: ['軽め', '通常', 'ハード'],
+      exIntensityIcons: ['🏃', '🏉', '💥'],
+      deskIntensityLabel: 'コンタクトの質',
+      deskIntensityTexts: ['ノーコン', 'ライト', 'フル'],
+      deskIntensityIcons: ['🤲', '🏉', '💥'],
+      analyzeBtn: '🏉 AIで今日のリカバリを分析'
+    }
+  };
+
+  function applyAppMode() {
+    const mode = typeof RecoverFeatures !== 'undefined' ? RecoverFeatures.getAppMode() : 'general';
+    const t = uiTexts[mode];
+    
+    // Update Mode Selector UI
+    const sel = document.getElementById('app-mode-selector');
+    if (sel && sel.value !== mode) sel.value = mode;
+
+    document.querySelector('.app-title').textContent = t.title;
+    document.querySelector('.app-subtitle').textContent = t.subtitle;
+    document.getElementById('app-logo').textContent = t.logo;
+    
+    const heroMsg = document.querySelector('.hero-message');
+    if (heroMsg) heroMsg.textContent = t.heroMsg;
+
+    const cards = document.querySelectorAll('.compact-card');
+    if (cards.length >= 2) {
+      cards[0].querySelector('.compact-icon').textContent = t.exIcon;
+      cards[0].querySelector('.compact-title').textContent = t.exTitle;
+      const exBtns = cards[0].querySelectorAll('.preset-text');
+      const exIcons = cards[0].querySelectorAll('.preset-icon');
+      if (exBtns.length === 3) {
+        for (let i=0; i<3; i++) { exBtns[i].textContent = t.exIntensityTexts[i]; exIcons[i].textContent = t.exIntensityIcons[i]; }
+      }
+
+      cards[1].querySelector('.compact-icon').textContent = t.deskIcon;
+      cards[1].querySelector('.compact-title').textContent = t.deskTitle;
+      cards[1].querySelectorAll('.input-label-text')[0].textContent = t.deskLabel;
+      
+      const deskSlider = document.getElementById('desk-time');
+      if (deskSlider) {
+        deskSlider.max = t.deskMax;
+        deskSlider.step = t.deskStep;
+        if (parseInt(deskSlider.value) > t.deskMax) deskSlider.value = t.deskMax;
+        document.getElementById('desk-time-val').textContent = `${deskSlider.value}${t.deskUnit}`;
+        const labels = cards[1].querySelectorAll('.slider-labels span');
+        if (labels.length === 3) {
+          for (let i=0; i<3; i++) labels[i].textContent = t.deskLabels[i];
+        }
+      }
+
+      cards[1].querySelectorAll('.input-label-text')[1].textContent = t.deskIntensityLabel;
+      const deskBtns = cards[1].querySelectorAll('#mental-intensity .preset-text');
+      const deskIcons = cards[1].querySelectorAll('#mental-intensity .preset-icon');
+      if (deskBtns.length === 3) {
+        for (let i=0; i<3; i++) { deskBtns[i].textContent = t.deskIntensityTexts[i]; deskIcons[i].textContent = t.deskIntensityIcons[i]; }
+      }
+    }
+
+    const analyzeBtn = document.getElementById('btn-analyze');
+    if (analyzeBtn) analyzeBtn.textContent = t.analyzeBtn;
+    
+    // bodymap data-parts update
+    const head = document.getElementById('bm-head');
+    const neck = document.getElementById('bm-neck');
+    const lshoulder = document.getElementById('bm-lshoulder');
+    const rshoulder = document.getElementById('bm-rshoulder');
+    const larm = document.getElementById('bm-larm');
+    const rarm = document.getElementById('bm-rarm');
+    
+    if (head) {
+      if (mode === 'rugby') {
+        head.setAttribute('data-part', 'head_neck');
+        neck.setAttribute('data-part', 'head_neck');
+        lshoulder.setAttribute('data-part', 'shoulder_arm');
+        rshoulder.setAttribute('data-part', 'shoulder_arm');
+        larm.setAttribute('data-part', 'shoulder_arm');
+        rarm.setAttribute('data-part', 'shoulder_arm');
+      } else {
+        head.setAttribute('data-part', 'eyes');
+        neck.setAttribute('data-part', 'neck_shoulder');
+        lshoulder.setAttribute('data-part', 'neck_shoulder');
+        rshoulder.setAttribute('data-part', 'neck_shoulder');
+        larm.setAttribute('data-part', 'neck_shoulder');
+        rarm.setAttribute('data-part', 'neck_shoulder');
+      }
+    }
+  }
+
   // ----- Stretch Database -----
-  const stretchDB = {
+  const stretchDB_general = {
+    eyes: [
+      { emoji: '👁️', name: '目のリラックス回転', instruction: '目を閉じて眼球をゆっくり時計回りに5回、反時計回りに5回まわします。完了したら、両手で目を温めるように軽く覆い10秒キープ。' },
+      { emoji: '🖐️', name: 'パーミング＆遠近トレーニング', instruction: '両手のひらで目を覆い完全な暗闘を20秒作ります。その後、近く（指先）と遠く（壁）を交互に5回見つめてピント調節筋をほぐします。' },
+      { emoji: '😌', name: 'こめかみ＆眉マッサージ', instruction: 'こめかみを指先で円を描くように15秒マッサージ。次に眉毛の上を親指で内側から外側へ5回スライドさせ、目周りの緊張を解放します。' },
+    ],
+    neck_shoulder: [
+      { emoji: '🙆', name: '首のストレッチ', instruction: '右手で左耳の上を軽く押さえ、ゆっくり右に首を傾けて15秒キープ。反対側も同様に行います。呼吸を止めないように。' },
+      { emoji: '💪', name: '肩甲骨ストレッチ', instruction: '両腕を前に伸ばし手を組み、背中を丸めて肩甲骨を広げます。15秒キープ後、今度は後ろで手を組み胸を開いて15秒。' },
+      { emoji: '🔄', name: '肩回し＆僧帽筋リリース', instruction: '両肩を耳に近づけるように上げて3秒キープし、ストンと脱力。5回繰り返した後、肩を大きく前後に5回ずつ回します。' },
+    ],
+    lower_back: [
+      { emoji: '🐱', name: 'キャットカウストレッチ', instruction: '四つん這いになり、息を吐きながら背中を丸め（猫のポーズ）、息を吸いながら背中を反らせます（牛のポーズ）。ゆっくり5回繰り返します。' },
+      { emoji: '🧎', name: '腰ひねりストレッチ', instruction: '仰向けに寝て両膝を立て、両膝を揃えてゆっくり右に倒し15秒キープ。反対側も同様に行い、腰周りの筋肉をほぐします。' },
+      { emoji: '🙏', name: 'チャイルドポーズ', instruction: '正座の状態から両手を前に伸ばし、額を床につけます。お尻をかかとに近づけ、背中と腰を伸ばしながら20秒間深い呼吸を繰り返します。' },
+    ],
+    legs: [
+      { emoji: '🦵', name: '前ももストレッチ', instruction: '片足で立ち、反対の足首を手で掴んでお尻に引き寄せます。膝が床を向くように15秒キープ。反対側も同様に行います。壁に手をついてOK。' },
+      { emoji: '🦶', name: 'ふくらはぎ＆足首ほぐし', instruction: '壁に手をつき、片足を後ろに引いてかかとを床につけたままふくらはぎを伸ばします。15秒キープ後、足首を左右5回ずつ回します。' },
+      { emoji: '🧘', name: 'ハムストリングストレッチ', instruction: '床に座り片足を伸ばし、もう片方は曲げて内ももに足裏をつけます。伸ばした足のつま先に向かって体を倒し20秒キープ。反対も同様に。' },
+    ],
+    full_body: [
+      { emoji: '🌟', name: '全身伸びストレッチ', instruction: '立った状態で両手を天井に向かって大きく伸ばし、つま先立ちになります。10秒キープ後、ゆっくり前屈して足先に手を伸ばします。3回繰り返します。' },
+      { emoji: '🔄', name: '体幹ツイスト', instruction: '足を肩幅に開き、両腕を水平に広げます。上半身をゆっくり右にひねり10秒キープ。反対側も同様に。骨盤は正面を向いたまま行います。' },
+      { emoji: '🌬️', name: '深呼吸リラクゼーション', instruction: '目を閉じ、4秒かけて鼻から吸い、7秒止め、8秒かけて口から吐きます（4-7-8呼吸法）。3回繰り返して自律神経を整えます。' },
+    ],
+  };
+
+  const stretchDB_rugby = {
     head_neck: [
       { emoji: '🧑', name: '首のアイソメトリクス', instruction: '手で額を押さえ、首を前に押し返すように5秒キープ。後頭部・左右も同様に行います。スクラムでの衝撃から首を守る筋力を維持します。' },
       { emoji: '🙆', name: '僧帽筋リリース', instruction: '両肩を耳に近づけるように上げて3秒キープし、ストンと脱力。5回繰り返した後、右手で左耳の上を押さえ、ゆっくり右に首を傾けて15秒キープ。反対側も同様に。' },
@@ -74,6 +215,11 @@ document.addEventListener('DOMContentLoaded', () => {
     ],
   };
 
+  function getStretchDB() {
+    const mode = typeof RecoverFeatures !== 'undefined' ? RecoverFeatures.getAppMode() : 'general';
+    return mode === 'rugby' ? stretchDB_rugby : stretchDB_general;
+  }
+
   // ----- Slider Updates -----
   els.exerciseTime.addEventListener('input', () => {
     const v = parseInt(els.exerciseTime.value);
@@ -82,7 +228,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   els.deskTime.addEventListener('input', () => {
     const v = parseInt(els.deskTime.value);
-    els.deskTimeVal.textContent = `${v}回`;
+    const mode = typeof RecoverFeatures !== 'undefined' ? RecoverFeatures.getAppMode() : 'general';
+    els.deskTimeVal.textContent = mode === 'rugby' ? `${v}回` : `${v}時間`;
   });
 
   // ----- Preset Button Logic -----
@@ -119,21 +266,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const physicalScore = (exTime / 60) * exIntMul; // 0~5.4
     const mentalScore = dTime * mnIntMul;           // 0~25.2
 
-    const fatigue = {
-      head_neck: { score: 0, label: '頭・首' },
-      shoulder_arm: { score: 0, label: '肩・腕' },
-      lower_back: { score: 0, label: '腰' },
-      legs: { score: 0, label: '脚' },
-    };
+    const mode = typeof RecoverFeatures !== 'undefined' ? RecoverFeatures.getAppMode() : 'general';
+    const fatigue = {};
 
-    // 頭・首: コンタクト強度に強く依存（スクラム・タックルの衝撃）
-    fatigue.head_neck.score = mentalScore * 0.8 + physicalScore * 0.2;
-    // 肩・腕: コンタクト＋練習時間の複合（タックル・ラック）
-    fatigue.shoulder_arm.score = mentalScore * 0.6 + physicalScore * 0.4;
-    // 腰: コンタクト＋運動負荷（スクラム・リフティング）
-    fatigue.lower_back.score = mentalScore * 0.5 + physicalScore * 0.5;
-    // 脚: 練習時間に強く依存（走行・ステップ・キック）
-    fatigue.legs.score = physicalScore * 0.8 + mentalScore * 0.15;
+    if (mode === 'rugby') {
+      fatigue.head_neck = { score: mentalScore * 0.8 + physicalScore * 0.2, label: '頭・首' };
+      fatigue.shoulder_arm = { score: mentalScore * 0.6 + physicalScore * 0.4, label: '肩・腕' };
+      fatigue.lower_back = { score: mentalScore * 0.5 + physicalScore * 0.5, label: '腰' };
+      fatigue.legs = { score: physicalScore * 0.8 + mentalScore * 0.15, label: '脚' };
+    } else {
+      fatigue.eyes = { score: mentalScore * 0.7 + physicalScore * 0.1, label: '目' };
+      fatigue.neck_shoulder = { score: mentalScore * 0.5 + physicalScore * 0.4, label: '首・肩' };
+      fatigue.lower_back = { score: mentalScore * 0.4 + physicalScore * 0.5, label: '腰' };
+      fatigue.legs = { score: physicalScore * 0.8 + mentalScore * 0.1, label: '足' };
+    }
 
     fatigue._physicalScore = physicalScore;
     fatigue._mentalScore = mentalScore;
@@ -209,8 +355,9 @@ document.addEventListener('DOMContentLoaded', () => {
       return `${String(Math.floor(total/60)%24).padStart(2,'0')}:${String(total%60).padStart(2,'0')}`;
     }
 
+    const mode = typeof RecoverFeatures !== 'undefined' ? RecoverFeatures.getAppMode() : 'general';
     const morningStretch = topArea === 'legs' || topArea === 'lower_back'
-      ? '軽いジョギングまたはストレッチ'
+      ? (mode === 'rugby' ? '軽いジョギングまたはストレッチ' : '軽いウォーキングまたはストレッチ')
       : '朝の目覚めストレッチ（5分）';
 
     return [
@@ -236,10 +383,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Comment
-    const areaNames = { head_neck: '頭・首', shoulder_arm: '肩・腕', lower_back: '腰', legs: '脚', full_body: '全身' };
+    const areaNames = typeof RecoverFeatures !== 'undefined' && RecoverFeatures.areaNames
+        ? (mode === 'rugby' ? RecoverFeatures.areaNames : RecoverFeatures.areaNamesGeneral)
+        : { head_neck: '頭・首', shoulder_arm: '肩・腕', lower_back: '腰', legs: '脚', full_body: '全身', eyes: '目', neck_shoulder: '首・肩' };
+    
     els.fatigueComment.textContent = topArea === 'full_body'
       ? '全体的に疲労が蓄積しています。全身をバランスよくケアするメニューを用意しました。'
-      : `今日は特に「${areaNames[topArea]}」への負荷が大きかったようです。専用のリカバリメニューを用意しました。`;
+      : `今日は特に「${areaNames[topArea] || topArea}」への負荷が大きかったようです。専用のリカバリメニューを用意しました。`;
 
     // Sleep
     els.sleepBedtime.textContent = sleep.bedtime;
@@ -377,6 +527,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  function init() {
+    setupInputListeners();
+    applyAppMode();
+    document.addEventListener('appModeChanged', applyAppMode);
+
+    const modeSelector = document.getElementById('app-mode-selector');
+    if (modeSelector) {
+      modeSelector.addEventListener('change', (e) => {
+        if (typeof RecoverFeatures !== 'undefined') {
+          RecoverFeatures.setAppMode(e.target.value);
+          if (document.getElementById('screen-result').classList.contains('active')) {
+            analyze();
+          }
+        }
+      });
+    }
+
+    if (els.btnAnalyze) els.btnAnalyze.addEventListener('click', analyze);
+  }
+
   els.btnSkip.addEventListener('click', () => nextStep());
 
   // ----- Loading Animation -----
@@ -448,4 +618,6 @@ document.addEventListener('DOMContentLoaded', () => {
     els.btnSkip.style.display = '';
     showScreen('input');
   });
+
+  init();
 });

@@ -120,7 +120,20 @@ const RecoverExtras = (() => {
   }
 
   // ===== 2. DAILY CHALLENGE =====
-  const challengePool = [
+  const challengePool_general = [
+    { id: 'water2l', emoji: '💧', text: '水を2L以上飲む' },
+    { id: 'walk30', emoji: '🚶', text: '30分間散歩する' },
+    { id: 'meditate', emoji: '🧘', text: '5分間瞑想する' },
+    { id: 'stretch10', emoji: '🙆', text: '10分間ストレッチする' },
+    { id: 'sleep23', emoji: '😴', text: '23時前に就寝する' },
+    { id: 'nosugar', emoji: '🚫', text: 'お菓子を1日我慢する' },
+    { id: 'read15', emoji: '📖', text: '本を15分間読む' },
+    { id: 'squat20', emoji: '🦵', text: 'スクワット20回する' },
+    { id: 'digitaldetox', emoji: '📵', text: '就寝前1時間スマホを見ない' },
+    { id: 'deepbreath', emoji: '🫁', text: '深呼吸を10回する' }
+  ];
+
+  const challengePool_rugby = [
     { id: 'pass100', emoji: '🏉', text: 'パスキャッチ100回練習する' },
     { id: 'water2l', emoji: '💧', text: '水を2L以上飲む' },
     { id: 'icing', emoji: '🧊', text: '練習後にアイシングする' },
@@ -144,11 +157,13 @@ const RecoverExtras = (() => {
   function getTodayChallenges() {
     const data = loadUserData();
     const today = todayStr();
+    const mode = typeof RecoverFeatures !== 'undefined' ? RecoverFeatures.getAppMode() : 'general';
+    const pool = mode === 'rugby' ? challengePool_rugby : challengePool_general;
     
     if (!data.challenges[today]) {
       // Seed random based on date for consistency
       const seed = today.replace(/-/g, '');
-      const shuffled = [...challengePool].sort((a, b) => {
+      const shuffled = [...pool].sort((a, b) => {
         const ha = hashCode(a.id + seed);
         const hb = hashCode(b.id + seed);
         return ha - hb;

@@ -19,8 +19,13 @@
     <h1 class="app-title">Recover AI</h1>
     <p class="app-subtitle">練習後の疲れを、3分でリセット 🏉</p>
     
-    <!-- アカウント＆同期 ボタングループ -->
-    <div style="position: absolute; top: 16px; right: 20px; display: flex; gap: 8px;">
+    <!-- アカウント＆モード＆同期 ボタングループ -->
+    <div style="position: absolute; top: 16px; right: 20px; display: flex; gap: 8px; align-items: center;">
+      <!-- モード切り替え -->
+      <select id="app-mode-selector" style="background: var(--bg-primary); border: none; padding: 6px 10px; border-radius: 12px; box-shadow: var(--shadow-out-sm); cursor: pointer; outline: none; font-family: 'Inter', sans-serif; font-size: 0.85rem; color: var(--text-primary);">
+        <option value="general">一般モード</option>
+        <option value="rugby">ラグビー部モード</option>
+      </select>
       <!-- スマホ同期ボタン -->
       <button id="btn-sync-mobile" style="display: flex; align-items: center; justify-content: center; background: var(--bg-primary); padding: 6px; border-radius: 50%; box-shadow: var(--shadow-out-sm); border: none; cursor: pointer; transition: transform 0.2s; width: 36px; height: 36px;">
         <span style="font-size: 1.1rem;">📱</span>

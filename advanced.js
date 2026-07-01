@@ -131,7 +131,23 @@ const RecoverAdvanced = (() => {
     if (el('forecast-icon')) el('forecast-icon').textContent = icon;
     if (el('forecast-status')) el('forecast-status').textContent = status;
     if (el('forecast-score')) el('forecast-score').textContent = forecastScore;
-    if (el('forecast-advice')) el('forecast-advice').textContent = advice;
+    const p = el('forecast-advice');
+    
+    const mode = typeof RecoverFeatures !== 'undefined' ? RecoverFeatures.getAppMode() : 'general';
+    let text = "";
+    if (mode === 'rugby') {
+      if (sleep.totalMinutes < 360) text = "睡眠不足気味です。怪我のリスクが高まるため、明日の練習はコンタクトプレーを控えめにし、早めに就寝してください。";
+      else if (fatigue._physicalScore > fatigue._mentalScore) text = "フィジカル疲労が蓄積しています。明日の練習はウォーミングアップを長めに取り、筋肉の張りに注意してください。";
+      else if (fatigue._mentalScore > 10) text = "コンタクト疲労が強いです。明日の練習は激しいヒットを避け、ハンドリングやリカバリ中心のメニューを推奨します。";
+      else text = "コンディションは良好です！明日の練習もフルコンタクトで高いパフォーマンスが期待できます。";
+    } else {
+      if (sleep.totalMinutes < 360) text = "睡眠不足気味です。明日は集中力の低下が予想されるため、こまめな休憩と仮眠を推奨します。";
+      else if (fatigue._mentalScore > fatigue._physicalScore) text = "脳・神経系の疲労が蓄積しています。明日はデジタルデトックスの時間を設け、目を休めることを意識してください。";
+      else if (fatigue._physicalScore > 3) text = "身体的な疲労が強めです。明日はストレッチを多めに行い、入浴でしっかり温まってください。";
+      else text = "コンディションは良好です！明日もこのペースを維持して、生産的な1日を送りましょう。";
+    }
+
+    if (p) p.textContent = text;
 
     // Animate bar
     setTimeout(() => {
@@ -148,21 +164,45 @@ const RecoverAdvanced = (() => {
     const el = document.getElementById('food-advice');
     if (!el) return;
 
-    let advice = "バランスの良い食事で体を回復させましょう。練習後30分以内のプロテイン摂取が効果的です！";
-    let icon = "🍱";
-    
-    if (fatigue._physicalScore > fatigue._mentalScore) {
-      icon = "🥩";
-      advice = "高強度のコンタクト練習でした。筋繊維の修復に「タンパク質（鶏むね肉・卵・プロテイン）」、グリコーゲン回復に「炭水化物（おにぎり・バナナ）」を練習後30分以内に摂取しましょう。鉄分補給に赤身肉もおすすめです。";
-    } else if (fatigue._mentalScore > fatigue._physicalScore) {
-      icon = "🍚";
-      advice = "ランニング主体の練習でした。失ったグリコーゲンの補充に「炭水化物（白米・うどん・パスタ）」を多めに。汗で失った電解質を補うために「味噌汁」や「スポーツドリンク」も忘れずに摂りましょう。";
-    } else if (fatigue.head_neck && fatigue.head_neck.score >= 5) {
-      icon = "🐟";
-      advice = "頭・首への衝撃が大きい練習でした。抗炎症作用のある「オメガ3脂肪酸（サバ・サーモン）」と、筋肉の修復を助ける「ビタミンC（柑橘類・キウイ）」を積極的に摂取しましょう。";
+    const mode = typeof RecoverFeatures !== 'undefined' ? RecoverFeatures.getAppMode() : 'general';
+    let advice = "";
+    let icon = "";
+
+    if (mode === 'rugby') {
+      advice = "バランスの良い食事で体を回復させましょう。練習後30分以内のプロテイン摂取が効果的です！";
+      icon = "🍱";
+      
+      if (fatigue._physicalScore > fatigue._mentalScore) {
+        icon = "🥩";
+        advice = "高強度のコンタクト練習でした。筋繊維の修復に「タンパク質（鶏むね肉・卵・プロテイン）」、グリコーゲン回復に「炭水化物（おにぎり・バナナ）」を練習後30分以内に摂取しましょう。鉄分補給に赤身肉もおすすめです。";
+      } else if (fatigue._mentalScore > fatigue._physicalScore) {
+        icon = "🍚";
+        advice = "ランニング主体の練習でした。枯渇したエネルギー（グリコーゲン）を補充するため、練習後すぐに「糖質（おにぎり・うどん・オレンジジュース）」を多めに摂取しましょう。発汗による電解質補給も忘れずに。";
+      }
+      
+      if (fatigue.head_neck && fatigue.head_neck.score > Math.max(fatigue.shoulder_arm.score, fatigue.lower_back.score, fatigue.legs.score)) {
+        icon = "🐟";
+        advice += " 頭・首へのコンタクト負荷が高めです。抗炎症作用のあるオメガ3脂肪酸（青魚・くるみ）やビタミンC（柑橘類・ブロッコリー）を積極的に摂りましょう。";
+      }
+    } else {
+      advice = "バランスの良い食事で体を回復させましょう。";
+      icon = "🍱";
+      
+      if (fatigue._mentalScore > fatigue._physicalScore) {
+        icon = "🫐";
+        advice = "デスクワークでの眼精疲労・脳疲労が蓄積しています。「アントシアニン（ブルーベリー）」や「DHA/EPA（青魚）」を意識して摂取しましょう。ビタミンB群（豚肉・玄米）も神経の回復に効果的です。";
+      } else if (fatigue._physicalScore > fatigue._mentalScore) {
+        icon = "🥩";
+        advice = "身体的な疲労が強めです。筋肉の修復を助ける「タンパク質（鶏むね肉・卵・大豆製品）」と「ビタミンB6（バナナ・さつまいも）」をセットで摂ると効果的です。";
+      }
+      
+      if (fatigue.eyes && fatigue.eyes.score > Math.max(fatigue.neck_shoulder.score, fatigue.lower_back.score, fatigue.legs.score)) {
+        icon = "🐟";
+        advice += " 目への負担が大きいようです。抗酸化作用の高いルテイン（ほうれん草・ブロッコリー）やアスタキサンチン（鮭・エビ）を積極的に摂りましょう。";
+      }
     }
 
-    el.innerHTML = `<strong>${icon} おすすめ:</strong> ${advice}`;
+    el.innerHTML = `<span style="font-size: 1.5rem; margin-right: 8px;">${icon}</span> <span>${advice}</span>`;
   }
 
   // ===== BREATHING EXERCISE =====
@@ -396,7 +436,11 @@ const RecoverAdvanced = (() => {
       win.classList.add('open');
       // Show initial greeting if no messages yet
       if (messages && messages.children.length === 0) {
-        addMsg('練習お疲れ様！体で気になるところはありますか？（例：肩が痛い、膝が重い、ハムが張ってる）', 'ai');
+        const mode = typeof RecoverFeatures !== 'undefined' ? RecoverFeatures.getAppMode() : 'general';
+        const initialMsg = mode === 'rugby' 
+          ? '練習お疲れ様！体で気になるところはありますか？（例：肩が痛い、膝が重い、ハムが張ってる）'
+          : '今日もお疲れ様です。体で気になるところはありますか？（例：目が疲れた、肩が凝る、腰が痛い）';
+        addMsg(initialMsg, 'ai');
       }
     });
     closeBtn.addEventListener('click', () => win.classList.remove('open'));
@@ -416,22 +460,43 @@ const RecoverAdvanced = (() => {
       input.value = '';
 
       setTimeout(() => {
-        let reply = 'お疲れ様です！練習後はしっかりクールダウンとストレッチを行い、早めに休みましょう。明日のパフォーマンスにつながります！';
-        if (/肩|タックル/.test(text)) {
-          reply = '肩への衝撃が大きかったですね。アイシング15分→温め→肩甲骨ストレッチの順でケアしましょう。明日の練習前にも入念にウォーミングアップしてください。';
-        } else if (/膝|ひざ/.test(text)) {
-          reply = '膝の違和感は要注意です。アイシングで炎症を抑え、大腿四頭筋とハムストリングのストレッチをバランスよく行いましょう。痛みが続く場合はトレーナーに相談してください。';
-        } else if (/首|スクラム/.test(text)) {
-          reply = 'スクラムで首に負担がかかりましたね。首の前後左右のアイソメトリクス運動（手で抵抗をかけて首を動かすトレーニング）で筋力を維持しつつ、ゆっくりストレッチしましょう。';
-        } else if (/腰|ロック|リフト/.test(text)) {
-          reply = '腰への負担が大きかったようです。腰部の回旋ストレッチと、体幹トレーニング（プランク30秒×3セット）で安定性を高めましょう。';
-        } else if (/ハム|もも|足|脚/.test(text)) {
-          reply = 'ランニングやステップで脚に疲労が溜まっていますね。ハムストリングと大腿四頭筋のストレッチを丁寧に行い、フォームローラーで筋膜リリースもおすすめです。';
-        } else if (/筋肉痛/.test(text)) {
-          reply = '練習後の筋肉痛は成長のサインです！軽いジョギングやウォーキングで血流を促進し、プロテインと十分な睡眠で回復を加速させましょう。';
-        } else if (/眠|疲/.test(text)) {
-          reply = '疲れが溜まっていますね。画面の「呼吸リラクゼーション(4-7-8呼吸法)」を試してみてください。質の高い睡眠で体をしっかりリカバリさせましょう。';
+        const mode = typeof RecoverFeatures !== 'undefined' ? RecoverFeatures.getAppMode() : 'general';
+        let reply = '';
+        
+        if (mode === 'rugby') {
+          reply = 'お疲れ様です！練習後はしっかりクールダウンとストレッチを行い、早めに休みましょう。明日のパフォーマンスにつながります！';
+          if (/肩|タックル/.test(text)) {
+            reply = '肩への衝撃が大きかったですね。アイシング15分→温め→肩甲骨ストレッチの順でケアしましょう。明日の練習前にも入念にウォーミングアップしてください。';
+          } else if (/膝|ひざ/.test(text)) {
+            reply = '膝の違和感は要注意です。アイシングで炎症を抑え、大腿四頭筋とハムストリングのストレッチをバランスよく行いましょう。痛みが続く場合はトレーナーに相談してください。';
+          } else if (/首|スクラム/.test(text)) {
+            reply = 'スクラムで首に負担がかかりましたね。首の前後左右のアイソメトリクス運動（手で抵抗をかけて首を動かすトレーニング）で筋力を維持しつつ、ゆっくりストレッチしましょう。';
+          } else if (/腰|ロック|リフト/.test(text)) {
+            reply = '腰への負担が大きかったようです。腰部の回旋ストレッチと、体幹トレーニング（プランク30秒×3セット）で安定性を高めましょう。';
+          } else if (/ハム|もも|足|脚/.test(text)) {
+            reply = 'ランニングやステップで脚に疲労が溜まっていますね。ハムストリングと大腿四頭筋のストレッチを丁寧に行い、フォームローラーで筋膜リリースもおすすめです。';
+          } else if (/筋肉痛/.test(text)) {
+            reply = '練習後の筋肉痛は成長のサインです！軽いジョギングやウォーキングで血流を促進し、プロテインと十分な睡眠で回復を加速させましょう。';
+          } else if (/眠|疲/.test(text)) {
+            reply = '疲れが溜まっていますね。画面の「呼吸リラクゼーション(4-7-8呼吸法)」を試してみてください。質の高い睡眠で体をしっかりリカバリさせましょう。';
+          }
+        } else {
+          reply = 'お疲れ様です。少しずつストレッチを取り入れて、明日に疲れを残さないようにしましょう。';
+          if (/目|見|かすみ/.test(text)) {
+            reply = '目の疲れですね。まずはホットアイマスクや蒸しタオルで5分ほど目を温めるのが効果的です。画面から離れて遠くを見る時間も作りましょう。';
+          } else if (/肩|首|こり|コリ/.test(text)) {
+            reply = '首肩のコリには、肩甲骨を大きく回すストレッチがおすすめです。お風呂でしっかり温まって血流を良くしましょう。';
+          } else if (/腰|背中/.test(text)) {
+            reply = '座りっぱなしだと腰に負担がかかりますね。立ち上がって軽く腰をひねったり、仰向けで両膝を抱えるストレッチを試してみてください。';
+          } else if (/足|脚|むくみ/.test(text)) {
+            reply = '脚のむくみには、ふくらはぎの軽いマッサージや、寝る前に壁に脚を立て掛けて血流を戻すポーズ（5分程度）がおすすめです。';
+          } else if (/頭|痛/.test(text)) {
+            reply = '頭が重い時は、こめかみの軽いマッサージや、深呼吸でリラックスしてください。水分不足の可能性もあるので、コップ1杯の水を飲みましょう。';
+          } else if (/眠|疲/.test(text)) {
+            reply = '疲れがピークに達しているようです。画面の「呼吸リラクゼーション(4-7-8呼吸法)」を試してみてください。今日は無理せず早めに就寝しましょう。';
+          }
         }
+        
         addMsg(reply, 'ai');
       }, 800);
     }

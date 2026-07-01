@@ -4,8 +4,9 @@ const RecoverFeatures = (() => {
   const USERS_KEY = 'recoverAI_users';
   const CURRENT_USER_KEY = 'recoverAI_currentUser';
   const areaNames = { head_neck:'頭・首', shoulder_arm:'肩・腕', lower_back:'腰', legs:'脚', full_body:'全身' };
+  const areaNamesGeneral = { eyes:'目', neck_shoulder:'首・肩', lower_back:'腰', legs:'足', full_body:'全身' };
 
-  function getDefault() { return { logs:[], hydrationToday:0, hydrationDate:null, reminderOn:false }; }
+  function getDefault() { return { logs:[], hydrationToday:0, hydrationDate:null, reminderOn:false, appMode: 'general' }; }
 
   // Migration: old recoverAI to multi-user
   function migrateOldData() {
@@ -465,6 +466,19 @@ const RecoverFeatures = (() => {
     // ここでは切り替えボタンからの操作のみとします。
   }
 
+  function getAppMode() {
+    const data = getAllUsers()[currentUser] || getDefault();
+    return data.appMode || 'general';
+  }
+
+  function setAppMode(mode) {
+    const users = getAllUsers();
+    if (!users[currentUser]) users[currentUser] = getDefault();
+    users[currentUser].appMode = mode;
+    localStorage.setItem(USERS_KEY, JSON.stringify(users));
+    document.dispatchEvent(new CustomEvent('appModeChanged'));
+  }
+
   return { 
     init, 
     saveLog, 
@@ -474,7 +488,9 @@ const RecoverFeatures = (() => {
     getCurrentUser,
     getAllUsers,
     switchUser,
-    createNewUser
+    createNewUser,
+    getAppMode,
+    setAppMode
   };
 })();
 
