@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ----- State -----
   let exerciseIntensity = 'moderate';
   let mentalIntensity = 'moderate';
+  let rugbyMenus = [];
   let timerInterval = null;
   let timerSeconds = 60;
   let currentStep = 0;
@@ -147,6 +148,14 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
+    // Highlight current mode
+    if (els.modeSelector) {
+      els.modeSelector.value = mode;
+    }
+    
+    const builder = document.getElementById('rugby-menu-builder');
+    if (builder) builder.style.display = mode === 'rugby' ? 'block' : 'none';
+
     const analyzeBtn = document.getElementById('btn-analyze');
     if (analyzeBtn) analyzeBtn.textContent = t.analyzeBtn;
     
@@ -241,6 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ----- Slider Updates -----
   els.exerciseTime.addEventListener('input', () => {
+    if (rugbyMenus.length > 0) return; // 詳細メニュー入力時は手動操作による表示更新を無視
     const v = parseInt(els.exerciseTime.value);
     const mode = typeof RecoverFeatures !== 'undefined' ? RecoverFeatures.getAppMode() : 'general';
     const unit = mode === 'rugby' ? '分' : '時間';
@@ -279,15 +289,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ----- Fatigue Analysis -----
   function analyzeFatigue() {
-    const exTime = parseInt(els.exerciseTime.value);
+    let exTime = parseInt(els.exerciseTime.value);
     const dTime = parseInt(els.deskTime.value);
     const exIntMul = { light: 0.5, moderate: 1.0, intense: 1.8 }[exerciseIntensity];
     const mnIntMul = { light: 0.5, moderate: 1.0, intense: 1.8 }[mentalIntensity];
+    const mode = typeof RecoverFeatures !== 'undefined' ? RecoverFeatures.getAppMode() : 'general';
 
-    const physicalScore = (exTime / 60) * exIntMul; // 0~5.4
+    let physicalScore = 0;
+    if (mode === 'rugby' && rugbyMenus.length > 0) {
+      let totalScore = 0;
+      let totalTime = 0;
+      rugbyMenus.forEach(m => {
+        const mul = { light: 0.5, moderate: 1.0, intense: 1.8 }[m.intensity];
+        totalScore += (m.time / 60) * mul;
+        totalTime += m.time;
+      });
+      physicalScore = totalScore;
+      exTime = totalTime;
+    } else {
+      physicalScore = (exTime / 60) * exIntMul; // 0~5.4
+    }
+
     const mentalScore = dTime * mnIntMul;           // 0~25.2
 
-    const mode = typeof RecoverFeatures !== 'undefined' ? RecoverFeatures.getAppMode() : 'general';
     const fatigue = {};
 
     if (mode === 'rugby') {
@@ -578,6 +602,71 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  function renderRugbyMenus() {
+    const list = document.getElementById('rugby-menu-list');
+    const summary = document.getElementById('rugby-menu-summary');
+    const totalSpan = document.getElementById('rugby-menu-total-time');
+    if(!list || !summary || !totalSpan) return;
+    
+    list.innerHTML = '';
+    let totalTime = 0;
+    
+    rugbyMenus.forEach((menu, index) => {
+      totalTime += menu.time;
+      const item = document.createElement('div');
+      item.className = 'rugby-menu-item';
+      item.innerHTML = `
+        <input type="text" placeholder="メニュー名(例: ユニット)" value="${menu.name}" data-index="${index}" class="menu-name">
+        <input type="number" min="0" step="5" placeholder="分" value="${menu.time}" data-index="${index}" class="menu-time">
+        <select data-index="${index}" class="menu-intensity">
+          <option value="light" ${menu.intensity === 'light' ? 'selected' : ''}>軽め</option>
+          <option value="moderate" ${menu.intensity === 'moderate' ? 'selected' : ''}>普通</option>
+          <option value="intense" ${menu.intensity === 'intense' ? 'selected' : ''}>ハード</option>
+        </select>
+        <button class="btn-delete-menu" data-index="${index}">🗑️</button>
+      `;
+      list.appendChild(item);
+    });
+
+    if (rugbyMenus.length > 0) {
+      summary.style.display = 'block';
+      totalSpan.textContent = totalTime;
+      els.exerciseTime.disabled = true;
+      els.exerciseTime.parentElement.style.opacity = '0.5';
+      els.exerciseTime.value = totalTime;
+      document.getElementById('exercise-time-val').textContent = `${totalTime}分 (詳細メニューから計算)`;
+    } else {
+      summary.style.display = 'none';
+      els.exerciseTime.disabled = false;
+      els.exerciseTime.parentElement.style.opacity = '1';
+      const mode = typeof RecoverFeatures !== 'undefined' ? RecoverFeatures.getAppMode() : 'general';
+      const unit = mode === 'rugby' ? '分' : '時間';
+      document.getElementById('exercise-time-val').textContent = `${els.exerciseTime.value}${unit}`;
+    }
+
+    list.querySelectorAll('.menu-name').forEach(el => {
+      el.addEventListener('input', (e) => { rugbyMenus[e.target.dataset.index].name = e.target.value; });
+    });
+    list.querySelectorAll('.menu-time').forEach(el => {
+      el.addEventListener('input', (e) => {
+        rugbyMenus[e.target.dataset.index].time = parseInt(e.target.value) || 0;
+        renderRugbyMenus();
+      });
+    });
+    list.querySelectorAll('.menu-intensity').forEach(el => {
+      el.addEventListener('change', (e) => {
+        rugbyMenus[e.target.dataset.index].intensity = e.target.value;
+        renderRugbyMenus(); // 再計算用に再描画
+      });
+    });
+    list.querySelectorAll('.btn-delete-menu').forEach(el => {
+      el.addEventListener('click', (e) => {
+        rugbyMenus.splice(e.target.dataset.index, 1);
+        renderRugbyMenus();
+      });
+    });
+  }
+
   function init() {
     applyAppMode();
     document.addEventListener('appModeChanged', applyAppMode);
@@ -585,8 +674,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const modeSelector = document.getElementById('app-mode-selector');
     if (modeSelector) {
       modeSelector.addEventListener('change', (e) => {
+        const mode = e.target.value;
+        // Highlight current mode
+        if (els.modeSelector) {
+          els.modeSelector.value = mode;
+        }
+
         if (typeof RecoverFeatures !== 'undefined') {
-          RecoverFeatures.setAppMode(e.target.value);
+          RecoverFeatures.setAppMode(mode);
           localStorage.setItem('recoverAI_mode_selected', 'true'); // Mode selected manually
           if (document.getElementById('screen-result').classList.contains('active')) {
             analyze();
@@ -596,6 +691,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (els.btnAnalyze) els.btnAnalyze.addEventListener('click', analyze);
+
+    const btnAddMenu = document.getElementById('btn-add-rugby-menu');
+    if (btnAddMenu) {
+      btnAddMenu.addEventListener('click', () => {
+        rugbyMenus.push({ name: '', time: 10, intensity: 'moderate' });
+        renderRugbyMenus();
+      });
+    }
     
     // Show modal if needed
     initModeSelectionModal();
@@ -642,6 +745,7 @@ document.addEventListener('DOMContentLoaded', () => {
     showScreen('result');
 
     // Save to history
+    const mode = typeof RecoverFeatures !== 'undefined' ? RecoverFeatures.getAppMode() : 'general';
     const scores = Object.values(fatigue).filter(v => typeof v === 'object').map(v => v.score);
     if (typeof RecoverFeatures !== 'undefined') {
       RecoverFeatures.saveLog({
@@ -654,6 +758,7 @@ document.addEventListener('DOMContentLoaded', () => {
         mentalScore: fatigue._mentalScore,
         totalScore: scores.reduce((a,b) => a+b, 0),
         sleepDuration: sleep.duration,
+        detailedMenus: (mode === 'rugby' && rugbyMenus.length > 0) ? [...rugbyMenus] : null
       });
     }
 
