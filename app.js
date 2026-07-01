@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
       subtitle: '今日の疲れを、たった3分でリセット',
       logo: '🌙',
       heroMsg: '今日の活動を記録して、最適なリカバリプランを作りましょう',
-      exIcon: '💼', exTitle: '業務・作業', exLabel: '稼働時間（移動等含む）', exIntensityLabel: '業務ハードさ',
+      exIcon: '💼', exTitle: '業務・作業', exLabel: '稼働時間（移動等含む）', exUnit: '時間', exMax: 12, exStep: 1, exLabels: ['0', '6h', '12h'], exIntensityLabel: '業務ハードさ',
       deskIcon: '💻', deskTitle: 'デスクワーク',
       deskLabel: 'PC作業時間', deskUnit: '時間', deskMax: 14, deskStep: 1, deskLabels: ['0', '7h', '14h'],
       exIntensityTexts: ['軽い', '普通', 'ハード'],
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
       subtitle: '練習後の疲れを、3分でリセット 🏉',
       logo: '🏉',
       heroMsg: '今日の練習を記録して、最適なリカバリプランを作りましょう',
-      exIcon: '🏉', exTitle: '練習・試合', exLabel: '時間', exIntensityLabel: '練習強度',
+      exIcon: '🏉', exTitle: '練習・試合', exLabel: '時間', exUnit: '分', exMax: 240, exStep: 10, exLabels: ['0', '2h', '4h'], exIntensityLabel: '練習強度',
       deskIcon: '💥', deskTitle: 'コンタクト強度',
       deskLabel: 'タックル・ヒット回数（目安）', deskUnit: '回', deskMax: 30, deskStep: 1, deskLabels: ['0', '15', '30'],
       exIntensityTexts: ['軽め', '通常', 'ハード'],
@@ -109,6 +109,18 @@ document.addEventListener('DOMContentLoaded', () => {
       const exIcons = cards[0].querySelectorAll('.preset-icon');
       if (exBtns.length === 3) {
         for (let i=0; i<3; i++) { exBtns[i].textContent = t.exIntensityTexts[i]; exIcons[i].textContent = t.exIntensityIcons[i]; }
+      }
+      
+      const exSlider = document.getElementById('exercise-time');
+      if (exSlider) {
+        exSlider.max = t.exMax;
+        exSlider.step = t.exStep;
+        if (parseInt(exSlider.value) > t.exMax) exSlider.value = t.exMax;
+        document.getElementById('exercise-time-val').textContent = `${exSlider.value}${t.exUnit}`;
+        const exLabelsSpan = cards[0].querySelectorAll('.slider-labels span');
+        if (exLabelsSpan.length === 3) {
+          for (let i=0; i<3; i++) exLabelsSpan[i].textContent = t.exLabels[i];
+        }
       }
 
       cards[1].querySelector('.compact-icon').textContent = t.deskIcon;
@@ -230,7 +242,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // ----- Slider Updates -----
   els.exerciseTime.addEventListener('input', () => {
     const v = parseInt(els.exerciseTime.value);
-    els.exerciseTimeVal.textContent = v >= 60 ? `${Math.floor(v/60)}時間${v%60 ? v%60+'分':''}` : `${v}分`;
+    const mode = typeof RecoverFeatures !== 'undefined' ? RecoverFeatures.getAppMode() : 'general';
+    const unit = mode === 'rugby' ? '分' : '時間';
+    els.exerciseTimeVal.textContent = `${v}${unit}`;
   });
 
   els.deskTime.addEventListener('input', () => {
