@@ -3,7 +3,7 @@
 const RecoverFeatures = (() => {
   const USERS_KEY = 'recoverAI_users';
   const CURRENT_USER_KEY = 'recoverAI_currentUser';
-  const areaNames = { eyes:'目', neck_shoulder:'首・肩', lower_back:'腰', legs:'足', full_body:'全身' };
+  const areaNames = { head_neck:'頭・首', shoulder_arm:'肩・腕', lower_back:'腰', legs:'脚', full_body:'全身' };
 
   function getDefault() { return { logs:[], hydrationToday:0, hydrationDate:null, reminderOn:false }; }
 

@@ -85,7 +85,7 @@ const RecoverAdvanced = (() => {
     const container = document.querySelector('.bodymap-container');
     if (!tooltip || !container) return;
 
-    const labels = { eyes: '目', neck_shoulder: '首・肩', lower_back: '腰', legs: '足' };
+    const labels = { head_neck: '頭・首', shoulder_arm: '肩・腕', lower_back: '腰', legs: '脚' };
     document.querySelectorAll('.bm-part').forEach(el => {
       el.addEventListener('mouseenter', (e) => {
         const part = el.dataset.part;
@@ -115,16 +115,16 @@ const RecoverAdvanced = (() => {
     let icon, status, advice;
     if (forecastScore >= 80) {
       icon = '☀️'; status = '絶好調';
-      advice = '十分なリカバリが見込めます。明日は高いパフォーマンスで活動できるでしょう！積極的に挑戦してみてください。';
+      advice = '十分なリカバリが見込めます。明日の練習では高いパフォーマンスが期待できます！積極的にプレーしましょう。';
     } else if (forecastScore >= 60) {
       icon = '⛅'; status = 'まずまず';
-      advice = 'ある程度の回復が期待できます。午前中に重要なタスクを集中して行い、午後は無理をしないようにしましょう。';
+      advice = 'ある程度の回復が期待できます。ウォーミングアップを丁寧に行い、練習中はこまめに水分を補給しましょう。';
     } else if (forecastScore >= 40) {
       icon = '🌥️'; status = 'やや疲労残り';
-      advice = '疲労が少し残る可能性があります。こまめな休憩と水分補給を心がけ、ハードな運動は控えましょう。';
+      advice = '疲労が残る可能性があります。フルコンタクトは控えめにし、スキル練習やフィットネス中心のメニューがおすすめです。';
     } else {
       icon = '🌧️'; status = '要注意';
-      advice = '疲労の蓄積が見られます。明日は無理をせず、短い昼寝（20分以内）や軽い散歩で回復を優先してください。';
+      advice = '疲労の蓄積が見られます。明日は軽めのリカバリ練習にとどめ、アイシングやストレッチで体のケアを優先してください。';
     }
 
     const el = (id) => document.getElementById(id);
@@ -148,18 +148,18 @@ const RecoverAdvanced = (() => {
     const el = document.getElementById('food-advice');
     if (!el) return;
 
-    let advice = "バランスの良い食事を心がけましょう。水分補給も忘れずに！";
+    let advice = "バランスの良い食事で体を回復させましょう。練習後30分以内のプロテイン摂取が効果的です！";
     let icon = "🍱";
     
     if (fatigue._physicalScore > fatigue._mentalScore) {
       icon = "🥩";
-      advice = "肉体的な疲労が溜まっています。筋肉の修復を助ける「タンパク質（鶏肉・大豆）」と、疲労回復の「ビタミンB1（豚肉・玄米）」を積極的に摂りましょう。";
+      advice = "高強度のコンタクト練習でした。筋繊維の修復に「タンパク質（鶏むね肉・卵・プロテイン）」、グリコーゲン回復に「炭水化物（おにぎり・バナナ）」を練習後30分以内に摂取しましょう。鉄分補給に赤身肉もおすすめです。";
     } else if (fatigue._mentalScore > fatigue._physicalScore) {
+      icon = "🍚";
+      advice = "ランニング主体の練習でした。失ったグリコーゲンの補充に「炭水化物（白米・うどん・パスタ）」を多めに。汗で失った電解質を補うために「味噌汁」や「スポーツドリンク」も忘れずに摂りましょう。";
+    } else if (fatigue.head_neck && fatigue.head_neck.score >= 5) {
       icon = "🐟";
-      advice = "脳や神経の疲労が見られます。リラックス効果のある「GABA（発芽玄米・トマト）」や、脳の栄養になる「DHA（青魚）」がおすすめです。";
-    } else if (fatigue.eyes && fatigue.eyes.score >= 5) {
-      icon = "🫐";
-      advice = "目の疲れが強いですね。抗酸化作用の高い「アントシアニン（ブルーベリー）」や「ビタミンA（ニンジン・かぼちゃ）」を意識して摂りましょう。";
+      advice = "頭・首への衝撃が大きい練習でした。抗炎症作用のある「オメガ3脂肪酸（サバ・サーモン）」と、筋肉の修復を助ける「ビタミンC（柑橘類・キウイ）」を積極的に摂取しましょう。";
     }
 
     el.innerHTML = `<strong>${icon} おすすめ:</strong> ${advice}`;
@@ -278,7 +278,7 @@ const RecoverAdvanced = (() => {
     if (h >= 5 && h < 12) greeting = 'おはようございます ☀️';
     else if (h >= 12 && h < 17) greeting = 'こんにちは 🌤️';
     else if (h >= 17 && h < 21) greeting = 'こんばんは 🌆';
-    else greeting = 'おやすみ前に 🌙';
+    else greeting = '練習後のケアを 🌙';
 
     const el = document.getElementById('hero-greeting');
     if (el) el.textContent = greeting;
@@ -296,7 +296,7 @@ const RecoverAdvanced = (() => {
         const scoreDetail = document.getElementById('hero-score-detail');
         const ring = document.getElementById('hero-score-ring');
         if (scoreNum) scoreNum.textContent = score;
-        if (scoreDetail) scoreDetail.textContent = `${last.date} — 疲労部位: ${({eyes:'目',neck_shoulder:'首・肩',lower_back:'腰',legs:'足',full_body:'全身'})[last.topArea]||'—'}`;
+        if (scoreDetail) scoreDetail.textContent = `${last.date} — 疲労部位: ${({head_neck:'頭・首',shoulder_arm:'肩・腕',lower_back:'腰',legs:'脚',full_body:'全身'})[last.topArea]||'—'}`;
         if (ring) {
           const circ = 2 * Math.PI * 34;
           setTimeout(() => { ring.style.strokeDashoffset = circ * (1 - score / 100); }, 300);
@@ -392,7 +392,13 @@ const RecoverAdvanced = (() => {
 
     if (!fab || !win) return;
 
-    fab.addEventListener('click', () => win.classList.add('open'));
+    fab.addEventListener('click', () => {
+      win.classList.add('open');
+      // Show initial greeting if no messages yet
+      if (messages && messages.children.length === 0) {
+        addMsg('練習お疲れ様！体で気になるところはありますか？（例：肩が痛い、膝が重い、ハムが張ってる）', 'ai');
+      }
+    });
     closeBtn.addEventListener('click', () => win.classList.remove('open'));
 
     function addMsg(text, type) {
@@ -410,17 +416,21 @@ const RecoverAdvanced = (() => {
       input.value = '';
 
       setTimeout(() => {
-        let reply = "なるほど。お疲れ様です。無理をせず、今日は早めに休みましょう！";
-        if (text.includes('目') || text.includes('PC') || text.includes('スマホ')) {
-          reply = "目の疲れですね。ホットアイマスクや、遠くを見るストレッチが効果的です！";
-        } else if (text.includes('肩') || text.includes('首')) {
-          reply = "肩や首周りがガチガチかもしれません。深呼吸しながら、ゆっくり首を回してみてください。";
-        } else if (text.includes('腰')) {
-          reply = "腰の痛みには、仰向けで膝を抱えるストレッチがおすすめです。";
-        } else if (text.includes('足') || text.includes('脚')) {
-          reply = "足の疲れですね。壁に足を立てかけて、血流を戻すポーズ（壁ドンストレッチ）が良いですよ！";
-        } else if (text.includes('眠') || text.includes('不眠')) {
-          reply = "眠れない時は、画面の「呼吸リラクゼーション(4-7-8呼吸法)」を試してみてください。自律神経が整います。";
+        let reply = 'お疲れ様です！練習後はしっかりクールダウンとストレッチを行い、早めに休みましょう。明日のパフォーマンスにつながります！';
+        if (/肩|タックル/.test(text)) {
+          reply = '肩への衝撃が大きかったですね。アイシング15分→温め→肩甲骨ストレッチの順でケアしましょう。明日の練習前にも入念にウォーミングアップしてください。';
+        } else if (/膝|ひざ/.test(text)) {
+          reply = '膝の違和感は要注意です。アイシングで炎症を抑え、大腿四頭筋とハムストリングのストレッチをバランスよく行いましょう。痛みが続く場合はトレーナーに相談してください。';
+        } else if (/首|スクラム/.test(text)) {
+          reply = 'スクラムで首に負担がかかりましたね。首の前後左右のアイソメトリクス運動（手で抵抗をかけて首を動かすトレーニング）で筋力を維持しつつ、ゆっくりストレッチしましょう。';
+        } else if (/腰|ロック|リフト/.test(text)) {
+          reply = '腰への負担が大きかったようです。腰部の回旋ストレッチと、体幹トレーニング（プランク30秒×3セット）で安定性を高めましょう。';
+        } else if (/ハム|もも|足|脚/.test(text)) {
+          reply = 'ランニングやステップで脚に疲労が溜まっていますね。ハムストリングと大腿四頭筋のストレッチを丁寧に行い、フォームローラーで筋膜リリースもおすすめです。';
+        } else if (/筋肉痛/.test(text)) {
+          reply = '練習後の筋肉痛は成長のサインです！軽いジョギングやウォーキングで血流を促進し、プロテインと十分な睡眠で回復を加速させましょう。';
+        } else if (/眠|疲/.test(text)) {
+          reply = '疲れが溜まっていますね。画面の「呼吸リラクゼーション(4-7-8呼吸法)」を試してみてください。質の高い睡眠で体をしっかりリカバリさせましょう。';
         }
         addMsg(reply, 'ai');
       }, 800);
@@ -439,7 +449,7 @@ const RecoverAdvanced = (() => {
     initChat();
   }
 
-  return { init, updateBodyMap, updateForecast };
+  return { init, updateBodyMap, updateForecast, initHero };
 })();
 
 document.addEventListener('DOMContentLoaded', () => RecoverAdvanced.init());

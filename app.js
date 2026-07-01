@@ -47,25 +47,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ----- Stretch Database -----
   const stretchDB = {
-    eyes: [
-      { emoji: '👁️', name: '目のリラックス回転', instruction: '目を閉じて眼球をゆっくり時計回りに5回、反時計回りに5回まわします。完了したら、両手で目を温めるように軽く覆い10秒キープ。' },
-      { emoji: '🖐️', name: 'パーミング＆遠近トレーニング', instruction: '両手のひらで目を覆い完全な暗闘を20秒作ります。その後、近く（指先）と遠く（壁）を交互に5回見つめてピント調節筋をほぐします。' },
-      { emoji: '😌', name: 'こめかみ＆眉マッサージ', instruction: 'こめかみを指先で円を描くように15秒マッサージ。次に眉毛の上を親指で内側から外側へ5回スライドさせ、目周りの緊張を解放します。' },
+    head_neck: [
+      { emoji: '🧑', name: '首のアイソメトリクス', instruction: '手で額を押さえ、首を前に押し返すように5秒キープ。後頭部・左右も同様に行います。スクラムでの衝撃から首を守る筋力を維持します。' },
+      { emoji: '🙆', name: '僧帽筋リリース', instruction: '両肩を耳に近づけるように上げて3秒キープし、ストンと脱力。5回繰り返した後、右手で左耳の上を押さえ、ゆっくり右に首を傾けて15秒キープ。反対側も同様に。' },
+      { emoji: '🙏', name: '胸鎖乳突筋ストレッチ', instruction: '右手を左肩の上に置き、顔をゴールポストのように左を向きながら後ろに傾けます。15秒キープ。タックル時の首の衝撃を和らげます。' },
     ],
-    neck_shoulder: [
-      { emoji: '🙆', name: '首のストレッチ', instruction: '右手で左耳の上を軽く押さえ、ゆっくり右に首を傾けて15秒キープ。反対側も同様に行います。呼吸を止めないように。' },
-      { emoji: '💪', name: '肩甲骨ストレッチ', instruction: '両腕を前に伸ばし手を組み、背中を丸めて肩甲骨を広げます。15秒キープ後、今度は後ろで手を組み胸を開いて15秒。' },
-      { emoji: '🔄', name: '肩回し＆僧帽筋リリース', instruction: '両肩を耳に近づけるように上げて3秒キープし、ストンと脱力。5回繰り返した後、肩を大きく前後に5回ずつ回します。' },
+    shoulder_arm: [
+      { emoji: '💪', name: '肩甲骨ストレッチ', instruction: '両腕を前に伸ばし手を組み、背中を丸めて肩甲骨を広げます。15秒キープ後、今度は後ろで手を組み胸を開い15秒。タックルやラックで固まった肩周りをほぐします。' },
+      { emoji: '🔄', name: '肩回し＆上腕三頭筋伸ばし', instruction: '肩を大きく前後に10回ずつ回します。次に右腕を頭の後ろに曲げ、左手で胘を軽く押して15秒キープ。反対側も同様に。' },
+      { emoji: '🤸', name: '胸筋・三角筋ストレッチ', instruction: '壁に手をつき、体を前に傾けて胸筋を伸ばします。15秒キープ。タックルの衝撃で縮こまった上半身を解放します。' },
     ],
     lower_back: [
-      { emoji: '🐱', name: 'キャットカウストレッチ', instruction: '四つん這いになり、息を吐きながら背中を丸め（猫のポーズ）、息を吸いながら背中を反らせます（牛のポーズ）。ゆっくり5回繰り返します。' },
-      { emoji: '🧎', name: '腰ひねりストレッチ', instruction: '仰向けに寝て両膝を立て、両膝を揃えてゆっくり右に倒し15秒キープ。反対側も同様に行い、腰周りの筋肉をほぐします。' },
-      { emoji: '🙏', name: 'チャイルドポーズ', instruction: '正座の状態から両手を前に伸ばし、額を床につけます。お尻をかかとに近づけ、背中と腰を伸ばしながら20秒間深い呼吸を繰り返します。' },
+      { emoji: '🐱', name: 'キャットカウストレッチ', instruction: '四つん這いになり、息を吐きながら背中を丸め（猫）、息を吸いながら背中を反らせます（牛）。スクラムやリフティングで固まった腰をリセット。' },
+      { emoji: '🧯', name: '腰部回旋ストレッチ', instruction: '仰向けに寝て両膝を立て、両膝を揃えてゴールポストように右に倒します。15秒キープ。反対側も同様に。ラックでの捷りで負担がかかった腰周りをほぐします。' },
+      { emoji: '💪', name: 'プランク＆体幹安定化', instruction: '肌を伸ばしてプランクの姿勢を取ります。30秒キープ×2セット。体幹の安定性を高め、スクラム時の腰の負担を軽減します。' },
     ],
     legs: [
-      { emoji: '🦵', name: '前ももストレッチ', instruction: '片足で立ち、反対の足首を手で掴んでお尻に引き寄せます。膝が床を向くように15秒キープ。反対側も同様に行います。壁に手をついてOK。' },
-      { emoji: '🦶', name: 'ふくらはぎ＆足首ほぐし', instruction: '壁に手をつき、片足を後ろに引いてかかとを床につけたままふくらはぎを伸ばします。15秒キープ後、足首を左右5回ずつ回します。' },
-      { emoji: '🧘', name: 'ハムストリングストレッチ', instruction: '床に座り片足を伸ばし、もう片方は曲げて内ももに足裏をつけます。伸ばした足のつま先に向かって体を倒し20秒キープ。反対も同様に。' },
+      { emoji: '🦵', name: '大腿四頭筋ストレッチ', instruction: '片足で立ち、反対の足首を手で掴んでお尻に引き寄せます。15秒キープ。スプリントやステップで酸った前ももをリカバリ。' },
+      { emoji: '🧘', name: 'ハムストリングストレッチ', instruction: '床に座り片足を伸ばし、つま先に向かって体を倒し20秒キープ。ランニングやキックで張った裏ももをしっかり伸ばします。' },
+      { emoji: '🦶', name: 'ふくらはぎ＆股関節ストレッチ', instruction: '壁に手をつき、片足を後ろに引いてかかとを床につけたままふくらはぎを伸ばします。15秒後、股関節を前後左右に大きく回して可動域を広げます。' },
     ],
     full_body: [
       { emoji: '🌟', name: '全身伸びストレッチ', instruction: '立った状態で両手を天井に向かって大きく伸ばし、つま先立ちになります。10秒キープ後、ゆっくり前屈して足先に手を伸ばします。3回繰り返します。' },
@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   els.deskTime.addEventListener('input', () => {
     const v = parseInt(els.deskTime.value);
-    els.deskTimeVal.textContent = `${v}時間`;
+    els.deskTimeVal.textContent = `${v}回`;
   });
 
   // ----- Preset Button Logic -----
@@ -120,20 +120,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const mentalScore = dTime * mnIntMul;           // 0~25.2
 
     const fatigue = {
-      eyes: { score: 0, label: '目' },
-      neck_shoulder: { score: 0, label: '首・肩' },
+      head_neck: { score: 0, label: '頭・首' },
+      shoulder_arm: { score: 0, label: '肩・腕' },
       lower_back: { score: 0, label: '腰' },
-      legs: { score: 0, label: '足' },
+      legs: { score: 0, label: '脚' },
     };
 
-    // 目の疲労: デスクワーク時間に強く依存
-    fatigue.eyes.score = mentalScore * 0.7 + physicalScore * 0.1;
-    // 首・肩: デスクワーク＋運動の複合
-    fatigue.neck_shoulder.score = mentalScore * 0.5 + physicalScore * 0.4;
-    // 腰: 長時間座位＋運動負荷
-    fatigue.lower_back.score = mentalScore * 0.4 + physicalScore * 0.5;
-    // 足: 運動量に強く依存
-    fatigue.legs.score = physicalScore * 0.8 + mentalScore * 0.1;
+    // 頭・首: コンタクト強度に強く依存（スクラム・タックルの衝撃）
+    fatigue.head_neck.score = mentalScore * 0.8 + physicalScore * 0.2;
+    // 肩・腕: コンタクト＋練習時間の複合（タックル・ラック）
+    fatigue.shoulder_arm.score = mentalScore * 0.6 + physicalScore * 0.4;
+    // 腰: コンタクト＋運動負荷（スクラム・リフティング）
+    fatigue.lower_back.score = mentalScore * 0.5 + physicalScore * 0.5;
+    // 脚: 練習時間に強く依存（走行・ステップ・キック）
+    fatigue.legs.score = physicalScore * 0.8 + mentalScore * 0.15;
 
     fatigue._physicalScore = physicalScore;
     fatigue._mentalScore = mentalScore;
@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const morningStretch = topArea === 'legs' || topArea === 'lower_back'
-      ? '軽いウォーキングまたはストレッチ'
+      ? '軽いジョギングまたはストレッチ'
       : '朝の目覚めストレッチ（5分）';
 
     return [
@@ -236,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Comment
-    const areaNames = { eyes: '目', neck_shoulder: '首・肩', lower_back: '腰', legs: '足', full_body: '全身' };
+    const areaNames = { head_neck: '頭・首', shoulder_arm: '肩・腕', lower_back: '腰', legs: '脚', full_body: '全身' };
     els.fatigueComment.textContent = topArea === 'full_body'
       ? '全体的に疲労が蓄積しています。全身をバランスよくケアするメニューを用意しました。'
       : `今日は特に「${areaNames[topArea]}」への負荷が大きかったようです。専用のリカバリメニューを用意しました。`;

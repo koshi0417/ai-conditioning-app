@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="その日の活動量から最適なリカバリストレッチと翌朝のスケジュールを提案するAIコンディショニングアプリ" />
-  <title>Recover AI — 3分リカバリコンディショニング</title>
+  <meta name="description" content="ラグビー部の練習・試合後の疲労を分析し、最適なリカバリストレッチと翌朝のスケジュールを提案するAIコンディショニングアプリ" />
+  <title>Recover AI 🏉 Rugby Edition</title>
   <link rel="stylesheet" href="styles.css" />
   <!-- QR Code Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
@@ -15,9 +15,9 @@
 <div class="app-container">
   <!-- ===== Header ===== -->
   <header class="app-header" style="position: relative;">
-    <div class="app-logo" id="app-logo">🌙</div>
+    <div class="app-logo" id="app-logo">🏉</div>
     <h1 class="app-title">Recover AI</h1>
-    <p class="app-subtitle">今日の疲れを、たった3分でリセット</p>
+    <p class="app-subtitle">練習後の疲れを、3分でリセット 🏉</p>
     
     <!-- アカウント＆同期 ボタングループ -->
     <div style="position: absolute; top: 16px; right: 20px; display: flex; gap: 8px;">
@@ -70,7 +70,7 @@
       <!-- ★ Hero Greeting Card -->
       <div class="glass-card hero-card stagger-1">
         <div class="hero-greeting" id="hero-greeting">こんばんは 🌙</div>
-        <div class="hero-message">今日の活動を記録して、最適なリカバリプランを作りましょう</div>
+        <div class="hero-message">今日の練習を記録して、最適なリカバリプランを作りましょう</div>
         <div class="hero-score-row">
           <div class="hero-score-ring">
             <svg viewBox="0 0 80 80" class="hero-ring-svg">
@@ -88,65 +88,65 @@
 
       <!-- ★ 2-Column Input Grid -->
       <div class="input-grid">
-        <!-- 運動量カード -->
+        <!-- 練習・試合カード -->
         <div class="glass-card compact-card stagger-2">
           <div class="compact-header">
-            <span class="compact-icon">🏃</span>
-            <span class="compact-title">運動量</span>
+            <span class="compact-icon">🏉</span>
+            <span class="compact-title">練習・試合</span>
           </div>
           <div class="input-group">
             <div class="input-label">
               <span class="input-label-text">時間</span>
-              <span class="input-value" id="exercise-time-val">30分</span>
+              <span class="input-value" id="exercise-time-val">60分</span>
             </div>
             <div class="slider-container">
-              <input type="range" id="exercise-time" min="0" max="180" value="30" step="10" />
-              <div class="slider-labels"><span>0</span><span>1h</span><span>3h</span></div>
+              <input type="range" id="exercise-time" min="0" max="240" value="60" step="10" />
+              <div class="slider-labels"><span>0</span><span>2h</span><span>4h</span></div>
             </div>
           </div>
           <div class="input-group" style="margin-bottom:0">
-            <div class="input-label"><span class="input-label-text">強度</span></div>
+            <div class="input-label"><span class="input-label-text">練習強度</span></div>
             <div class="preset-buttons" id="exercise-intensity">
               <button class="preset-btn" data-value="light">
-                <span class="preset-icon">🚶</span><span class="preset-text">軽い</span>
+                <span class="preset-icon">🏃</span><span class="preset-text">軽め</span>
               </button>
               <button class="preset-btn active" data-value="moderate">
-                <span class="preset-icon">🏃</span><span class="preset-text">普通</span>
+                <span class="preset-icon">🏉</span><span class="preset-text">通常</span>
               </button>
               <button class="preset-btn" data-value="intense">
-                <span class="preset-icon">🔥</span><span class="preset-text">ハード</span>
+                <span class="preset-icon">💥</span><span class="preset-text">ハード</span>
               </button>
             </div>
           </div>
         </div>
 
-        <!-- デスクワークカード -->
+        <!-- コンタクト強度カード -->
         <div class="glass-card compact-card stagger-3">
           <div class="compact-header">
-            <span class="compact-icon">💻</span>
-            <span class="compact-title">デスクワーク</span>
+            <span class="compact-icon">💥</span>
+            <span class="compact-title">コンタクト強度</span>
           </div>
           <div class="input-group">
             <div class="input-label">
-              <span class="input-label-text">PC時間</span>
-              <span class="input-value" id="desk-time-val">4時間</span>
+              <span class="input-label-text">タックル・ヒット回数（目安）</span>
+              <span class="input-value" id="desk-time-val">5回</span>
             </div>
             <div class="slider-container">
-              <input type="range" id="desk-time" min="0" max="14" value="4" step="1" />
-              <div class="slider-labels"><span>0</span><span>7h</span><span>14h</span></div>
+              <input type="range" id="desk-time" min="0" max="30" value="5" step="1" />
+              <div class="slider-labels"><span>0</span><span>15</span><span>30</span></div>
             </div>
           </div>
           <div class="input-group" style="margin-bottom:0">
-            <div class="input-label"><span class="input-label-text">集中度</span></div>
+            <div class="input-label"><span class="input-label-text">コンタクトの質</span></div>
             <div class="preset-buttons" id="mental-intensity">
               <button class="preset-btn" data-value="light">
-                <span class="preset-icon">📖</span><span class="preset-text">軽い</span>
+                <span class="preset-icon">🤲</span><span class="preset-text">ノーコン</span>
               </button>
               <button class="preset-btn active" data-value="moderate">
-                <span class="preset-icon">📝</span><span class="preset-text">普通</span>
+                <span class="preset-icon">🏉</span><span class="preset-text">ライト</span>
               </button>
               <button class="preset-btn" data-value="intense">
-                <span class="preset-icon">🧠</span><span class="preset-text">ヘビー</span>
+                <span class="preset-icon">💥</span><span class="preset-text">フル</span>
               </button>
             </div>
           </div>
@@ -170,7 +170,7 @@
       </div>
 
       <button class="btn-primary" id="btn-analyze">
-        🔍 AIで今日のリカバリを分析
+        🏉 AIで今日のリカバリを分析
       </button>
     </section>
 
@@ -221,20 +221,20 @@
         <div class="bodymap-container">
           <svg id="bodymap-svg" viewBox="0 0 200 420" class="bodymap-svg">
             <!-- Head -->
-            <ellipse id="bm-head" cx="100" cy="32" rx="22" ry="26" class="bm-part" data-part="eyes"/>
+            <ellipse id="bm-head" cx="100" cy="32" rx="22" ry="26" class="bm-part" data-part="head_neck"/>
             <!-- Neck -->
-            <rect id="bm-neck" x="92" y="56" width="16" height="14" rx="4" class="bm-part" data-part="neck_shoulder"/>
+            <rect id="bm-neck" x="92" y="56" width="16" height="14" rx="4" class="bm-part" data-part="head_neck"/>
             <!-- Shoulders -->
-            <ellipse id="bm-lshoulder" cx="62" cy="80" rx="18" ry="12" class="bm-part" data-part="neck_shoulder"/>
-            <ellipse id="bm-rshoulder" cx="138" cy="80" rx="18" ry="12" class="bm-part" data-part="neck_shoulder"/>
+            <ellipse id="bm-lshoulder" cx="62" cy="80" rx="18" ry="12" class="bm-part" data-part="shoulder_arm"/>
+            <ellipse id="bm-rshoulder" cx="138" cy="80" rx="18" ry="12" class="bm-part" data-part="shoulder_arm"/>
             <!-- Torso -->
             <path id="bm-torso" d="M72,88 L60,90 L56,160 L80,170 L100,174 L120,170 L144,160 L140,90 L128,88 Z" class="bm-part" data-part="lower_back"/>
             <!-- Upper Arms -->
-            <rect id="bm-larm" x="38" y="88" width="16" height="50" rx="8" class="bm-part" data-part="neck_shoulder"/>
-            <rect id="bm-rarm" x="146" y="88" width="16" height="50" rx="8" class="bm-part" data-part="neck_shoulder"/>
+            <rect id="bm-larm" x="38" y="88" width="16" height="50" rx="8" class="bm-part" data-part="shoulder_arm"/>
+            <rect id="bm-rarm" x="146" y="88" width="16" height="50" rx="8" class="bm-part" data-part="shoulder_arm"/>
             <!-- Lower Arms -->
-            <rect x="32" y="140" width="14" height="50" rx="7" class="bm-part" data-part="neck_shoulder" style="opacity:0.5"/>
-            <rect x="154" y="140" width="14" height="50" rx="7" class="bm-part" data-part="neck_shoulder" style="opacity:0.5"/>
+            <rect x="32" y="140" width="14" height="50" rx="7" class="bm-part" data-part="shoulder_arm" style="opacity:0.5"/>
+            <rect x="154" y="140" width="14" height="50" rx="7" class="bm-part" data-part="shoulder_arm" style="opacity:0.5"/>
             <!-- Upper Legs -->
             <rect id="bm-luleg" x="72" y="178" width="22" height="70" rx="10" class="bm-part" data-part="legs"/>
             <rect id="bm-ruleg" x="106" y="178" width="22" height="70" rx="10" class="bm-part" data-part="legs"/>
@@ -721,7 +721,7 @@
     <div class="chat-close" id="chat-close">✖</div>
   </div>
   <div class="chat-messages" id="chat-messages">
-    <div class="chat-msg ai">こんにちは！今日の体調で気になること（例：目が疲れた、肩が痛い）はありますか？</div>
+    <div class="chat-msg ai">練習お疲れ様！体で気になるところ（例：肩が痛い、膝が重い、ハムが張ってる）はありますか？</div>
   </div>
   <div class="chat-input-area">
     <input type="text" id="chat-input" class="chat-input" placeholder="メッセージを入力...">
