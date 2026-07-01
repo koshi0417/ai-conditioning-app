@@ -467,14 +467,16 @@ const RecoverFeatures = (() => {
   }
 
   function getAppMode() {
-    const data = getAllUsers()[currentUser] || getDefault();
+    const cu = getCurrentUser();
+    const data = getAllUsers()[cu] || getDefault();
     return data.appMode || 'general';
   }
 
   function setAppMode(mode) {
     const users = getAllUsers();
-    if (!users[currentUser]) users[currentUser] = getDefault();
-    users[currentUser].appMode = mode;
+    const cu = getCurrentUser();
+    if (!users[cu]) users[cu] = getDefault();
+    users[cu].appMode = mode;
     localStorage.setItem(USERS_KEY, JSON.stringify(users));
     document.dispatchEvent(new CustomEvent('appModeChanged'));
   }

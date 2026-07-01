@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
       subtitle: '今日の疲れを、たった3分でリセット',
       logo: '🌙',
       heroMsg: '今日の活動を記録して、最適なリカバリプランを作りましょう',
-      exIcon: '🏃', exTitle: '運動量',
+      exIcon: '🏃', exTitle: '運動量', exLabel: '運動時間', exIntensityLabel: '運動強度',
       deskIcon: '💻', deskTitle: 'デスクワーク',
       deskLabel: 'PC時間', deskUnit: '時間', deskMax: 14, deskStep: 1, deskLabels: ['0', '7h', '14h'],
       exIntensityTexts: ['軽い', '普通', 'ハード'],
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
       subtitle: '練習後の疲れを、3分でリセット 🏉',
       logo: '🏉',
       heroMsg: '今日の練習を記録して、最適なリカバリプランを作りましょう',
-      exIcon: '🏉', exTitle: '練習・試合',
+      exIcon: '🏉', exTitle: '練習・試合', exLabel: '時間', exIntensityLabel: '練習強度',
       deskIcon: '💥', deskTitle: 'コンタクト強度',
       deskLabel: 'タックル・ヒット回数（目安）', deskUnit: '回', deskMax: 30, deskStep: 1, deskLabels: ['0', '15', '30'],
       exIntensityTexts: ['軽め', '通常', 'ハード'],
@@ -98,6 +98,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (cards.length >= 2) {
       cards[0].querySelector('.compact-icon').textContent = t.exIcon;
       cards[0].querySelector('.compact-title').textContent = t.exTitle;
+      
+      const exLabelsText = cards[0].querySelectorAll('.input-label-text');
+      if (exLabelsText.length >= 2) {
+        exLabelsText[0].textContent = t.exLabel;
+        exLabelsText[1].textContent = t.exIntensityLabel;
+      }
+      
       const exBtns = cards[0].querySelectorAll('.preset-text');
       const exIcons = cards[0].querySelectorAll('.preset-icon');
       if (exBtns.length === 3) {
