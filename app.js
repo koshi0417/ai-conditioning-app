@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const heroMsg = document.querySelector('.hero-message');
     if (heroMsg) heroMsg.textContent = t.heroMsg;
 
-    const cards = document.querySelectorAll('.compact-card');
+    const cards = document.querySelectorAll('.input-grid > .glass-card.compact-card');
     if (cards.length >= 2) {
       cards[0].querySelector('.compact-icon').textContent = t.exIcon;
       cards[0].querySelector('.compact-title').textContent = t.exTitle;
