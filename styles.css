@@ -2120,6 +2120,11 @@ input[type="range"]:active::-webkit-slider-thumb {
   background: rgba(239, 68, 68, 0.4);
 }
 
+/* ===== Rugby Weight Loss Colors ===== */
+.text-normal { color: var(--text-secondary) !important; }
+.text-warning { color: #f59e0b !important; } /* オレンジ */
+.text-danger { color: #ef4444 !important; } /* 赤 */
+
 /* ===== Bottom Nav adjustment for 6 tabs ===== */
 .bottom-nav {
   gap: 0;

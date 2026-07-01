@@ -34,6 +34,9 @@ document.addEventListener('DOMContentLoaded', () => {
     stepIndicators: document.getElementById('step-indicators'),
     btnTimer: document.getElementById('btn-timer'),
     btnSkip: document.getElementById('btn-skip'),
+    weightBefore: document.getElementById('weight-before'),
+    weightAfter: document.getElementById('weight-after'),
+    weightLossResult: document.getElementById('weight-loss-result'),
   };
 
   // ----- State -----
@@ -155,6 +158,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const builder = document.getElementById('rugby-menu-builder');
     if (builder) builder.style.display = mode === 'rugby' ? 'block' : 'none';
+
+    const weightContainer = document.getElementById('rugby-weight-container');
+    if (weightContainer) weightContainer.style.display = mode === 'rugby' ? 'block' : 'none';
 
     const analyzeBtn = document.getElementById('btn-analyze');
     if (analyzeBtn) analyzeBtn.textContent = t.analyzeBtn;
@@ -296,6 +302,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const mode = typeof RecoverFeatures !== 'undefined' ? RecoverFeatures.getAppMode() : 'general';
 
     let physicalScore = 0;
+    let dehydrationPenalty = 0;
+    let weightLossPct = 0;
+    let hydrationWarning = '';
+    let waterToDrink = 0;
+
+    if (mode === 'rugby' && els.weightBefore && els.weightAfter) {
+      const wb = parseFloat(els.weightBefore.value);
+      const wa = parseFloat(els.weightAfter.value);
+      if (!isNaN(wb) && !isNaN(wa) && wb > 0) {
+        const diff = wb - wa;
+        weightLossPct = (diff / wb) * 100;
+        
+        if (weightLossPct >= 3.0) {
+          dehydrationPenalty = 4.0;
+          hydrationWarning = `【重度の脱水警告】体重が${weightLossPct.toFixed(1)}%減少しています。速やかに経口補水液などで ${(diff * 1.5).toFixed(1)}L（失われた水分の1.5倍）を補給し、涼しい場所で休んでください。`;
+        } else if (weightLossPct >= 2.0) {
+          dehydrationPenalty = 2.0;
+          hydrationWarning = `【水分不足アラート】パフォーマンスが低下しやすい脱水レベル（${weightLossPct.toFixed(1)}%減少）です。こまめに ${(diff * 1.5).toFixed(1)}L の水分を補給しましょう。`;
+        } else if (weightLossPct > 0) {
+          hydrationWarning = `練習で失われた水分として ${(diff * 1.2).toFixed(1)}〜${(diff * 1.5).toFixed(1)}L の補給を目安にしてください。`;
+        }
+        waterToDrink = diff * 1.5;
+      }
+    }
+
     if (mode === 'rugby' && rugbyMenus.length > 0) {
       let totalScore = 0;
       let totalTime = 0;
@@ -304,15 +335,18 @@ document.addEventListener('DOMContentLoaded', () => {
         totalScore += (m.time / 60) * mul;
         totalTime += m.time;
       });
-      physicalScore = totalScore;
+      physicalScore = totalScore + dehydrationPenalty;
       exTime = totalTime;
     } else {
-      physicalScore = (exTime / 60) * exIntMul; // 0~5.4
+      physicalScore = (exTime / 60) * exIntMul + dehydrationPenalty; // 0~5.4 + penalty
     }
 
     const mentalScore = dTime * mnIntMul;           // 0~25.2
 
     const fatigue = {};
+    if (hydrationWarning) {
+      fatigue._dehydrationInfo = { pct: weightLossPct, warning: hydrationWarning, toDrink: waterToDrink };
+    }
 
     if (mode === 'rugby') {
       fatigue.head_neck = { score: mentalScore * 0.8 + physicalScore * 0.2, label: '頭・首' };
@@ -434,9 +468,18 @@ document.addEventListener('DOMContentLoaded', () => {
         ? (mode === 'rugby' ? RecoverFeatures.areaNames : RecoverFeatures.areaNamesGeneral)
         : { head_neck: '頭・首', shoulder_arm: '肩・腕', lower_back: '腰', legs: '脚', full_body: '全身', eyes: '目', neck_shoulder: '首・肩' };
     
-    els.fatigueComment.textContent = topArea === 'full_body'
+    let commentHtml = topArea === 'full_body'
       ? '全体的に疲労が蓄積しています。全身をバランスよくケアするメニューを用意しました。'
       : `今日は特に「${areaNames[topArea] || topArea}」への負荷が大きかったようです。専用のリカバリメニューを用意しました。`;
+
+    if (fatigue._dehydrationInfo && fatigue._dehydrationInfo.warning) {
+      const isDanger = fatigue._dehydrationInfo.pct >= 3.0;
+      const isWarning = fatigue._dehydrationInfo.pct >= 2.0;
+      const color = isDanger ? '#ef4444' : (isWarning ? '#f59e0b' : '#3b82f6');
+      const bg = isDanger ? 'rgba(239, 68, 68, 0.1)' : (isWarning ? 'rgba(245, 158, 11, 0.1)' : 'rgba(59, 130, 246, 0.1)');
+      commentHtml = `<div style="margin-bottom: 12px; padding: 12px; background: ${bg}; border-left: 4px solid ${color}; border-radius: 4px; color: var(--text-primary); font-size: 0.9rem;">${fatigue._dehydrationInfo.warning}</div>` + commentHtml;
+    }
+    els.fatigueComment.innerHTML = commentHtml;
 
     // Sleep
     els.sleepBedtime.textContent = sleep.bedtime;
@@ -629,6 +672,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  function updateWeightLoss() {
+    if (!els.weightBefore || !els.weightAfter || !els.weightLossResult) return;
+    const wb = parseFloat(els.weightBefore.value);
+    const wa = parseFloat(els.weightAfter.value);
+    
+    if (isNaN(wb) || isNaN(wa) || wb <= 0) {
+      els.weightLossResult.textContent = '-- kg (0.0%)';
+      els.weightLossResult.className = 'text-normal';
+      return;
+    }
+    
+    const diff = wb - wa;
+    const pct = (diff / wb) * 100;
+    const sign = diff > 0 ? '-' : (diff < 0 ? '+' : '±');
+    
+    els.weightLossResult.textContent = `${sign}${Math.abs(diff).toFixed(1)}kg (${pct.toFixed(1)}%)`;
+    
+    if (pct >= 3.0) {
+      els.weightLossResult.className = 'text-danger';
+    } else if (pct >= 2.0) {
+      els.weightLossResult.className = 'text-warning';
+    } else {
+      els.weightLossResult.className = 'text-normal';
+    }
+  }
+
+  if (els.weightBefore) els.weightBefore.addEventListener('input', updateWeightLoss);
+  if (els.weightAfter) els.weightAfter.addEventListener('input', updateWeightLoss);
+
   function renderRugbyMenus() {
     const list = document.getElementById('rugby-menu-list');
     if(!list) return;
@@ -767,7 +839,8 @@ document.addEventListener('DOMContentLoaded', () => {
         mentalScore: fatigue._mentalScore,
         totalScore: scores.reduce((a,b) => a+b, 0),
         sleepDuration: sleep.duration,
-        detailedMenus: (mode === 'rugby' && rugbyMenus.length > 0) ? [...rugbyMenus] : null
+        detailedMenus: (mode === 'rugby' && rugbyMenus.length > 0) ? [...rugbyMenus] : null,
+        dehydrationInfo: fatigue._dehydrationInfo || null
       });
     }
 
