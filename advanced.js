@@ -169,40 +169,49 @@ const RecoverAdvanced = (() => {
     let icon = "";
 
     if (mode === 'rugby') {
-      advice = "バランスの良い食事で体を回復させましょう。練習後30分以内のプロテイン摂取が効果的です！";
+      advice = "バランスの良い食事で体を回復させましょう。\n\n**【おすすめ献立】**\n・焼き魚定食（塩鮭、ご飯、味噌汁、納豆）\n・フルーツ（オレンジやバナナ）\n※練習後30分以内のプロテイン摂取が効果的です！";
       icon = "🍱";
       
       if (fatigue._physicalScore > fatigue._mentalScore) {
         icon = "🥩";
-        advice = "高強度のコンタクト練習でした。筋繊維の修復に「タンパク質（鶏むね肉・卵・プロテイン）」、グリコーゲン回復に「炭水化物（おにぎり・バナナ）」を練習後30分以内に摂取しましょう。鉄分補給に赤身肉もおすすめです。";
+        advice = "高強度のコンタクト練習でした。筋繊維の修復とグリコーゲン回復が必要です。\n\n**【おすすめ献立：筋肉修復フルコース】**\n・鶏むね肉のガーリックステーキ（タンパク質）\n・大盛り玄米または白米（糖質・ビタミンB）\n・ほうれん草と卵の味噌汁（鉄分・アミノ酸）\n・ひじきの煮物\n・オレンジ100%ジュース\n※練習後30分以内にプロテインとおにぎり等を摂取するとより効果的です。";
       } else if (fatigue._mentalScore > fatigue._physicalScore) {
         icon = "🍚";
-        advice = "ランニング主体の練習でした。枯渇したエネルギー（グリコーゲン）を補充するため、練習後すぐに「糖質（おにぎり・うどん・オレンジジュース）」を多めに摂取しましょう。発汗による電解質補給も忘れずに。";
+        advice = "ランニング主体の激しい練習でした。枯渇したエネルギーの補充と電解質補給が最優先です。\n\n**【おすすめ献立：エネルギー爆速回復定食】**\n・豚の生姜焼き（ビタミンB1で疲労回復）\n・とろろご飯（消化吸収の良い糖質）\n・豆腐とわかめの味噌汁（ミネラル補給）\n・冷奴\n・バナナヨーグルト";
       }
       
       if (fatigue.head_neck && fatigue.head_neck.score > Math.max(fatigue.shoulder_arm.score, fatigue.lower_back.score, fatigue.legs.score)) {
         icon = "🐟";
-        advice += " 頭・首へのコンタクト負荷が高めです。抗炎症作用のあるオメガ3脂肪酸（青魚・くるみ）やビタミンC（柑橘類・ブロッコリー）を積極的に摂りましょう。";
+        advice += "\n\n💡**ワンポイント:** 頭・首へのコンタクト負荷が高めです。抗炎症作用のあるオメガ3脂肪酸（青魚・くるみ）やビタミンC（柑橘類・ブロッコリー）を積極的に一品加えましょう。";
       }
     } else {
-      advice = "バランスの良い食事で体を回復させましょう。";
+      advice = "バランスの良い食事で体を回復させましょう。\n\n**【おすすめ献立】**\n・肉じゃが定食（ご飯、味噌汁、冷奴）\n・サラダ";
       icon = "🍱";
       
       if (fatigue._mentalScore > fatigue._physicalScore) {
         icon = "🫐";
-        advice = "デスクワークでの眼精疲労・脳疲労が蓄積しています。「アントシアニン（ブルーベリー）」や「DHA/EPA（青魚）」を意識して摂取しましょう。ビタミンB群（豚肉・玄米）も神経の回復に効果的です。";
+        advice = "デスクワークでの眼精疲労・脳疲労が蓄積しています。\n\n**【おすすめ献立：脳・眼精疲労リセット定食】**\n・サーモンとほうれん草のクリーム煮（DHA/EPA・ルテイン）\n・アボカドとトマトのサラダ（抗酸化作用）\n・くるみパン\n・ブルーベリーヨーグルト\n※ビタミンB群（豚肉・玄米）も神経の回復に効果的です。";
       } else if (fatigue._physicalScore > fatigue._mentalScore) {
         icon = "🥩";
-        advice = "身体的な疲労が強めです。筋肉の修復を助ける「タンパク質（鶏むね肉・卵・大豆製品）」と「ビタミンB6（バナナ・さつまいも）」をセットで摂ると効果的です。";
+        advice = "身体的な疲労が強めです。筋肉の修復を助ける食事が効果的です。\n\n**【おすすめ献立：肉体疲労リカバリ定食】**\n・豚肉とパプリカの黒酢炒め（クエン酸・ビタミンB1）\n・ブロッコリーとゆで卵のサラダ（ビタミンC・タンパク質）\n・雑穀米\n・あさりの味噌汁（タウリン）";
       }
       
       if (fatigue.eyes && fatigue.eyes.score > Math.max(fatigue.neck_shoulder.score, fatigue.lower_back.score, fatigue.legs.score)) {
         icon = "🐟";
-        advice += " 目への負担が大きいようです。抗酸化作用の高いルテイン（ほうれん草・ブロッコリー）やアスタキサンチン（鮭・エビ）を積極的に摂りましょう。";
+        advice += "\n\n💡**ワンポイント:** 目の疲れが顕著です。「アントシアニン（ベリー類）」や「ビタミンA（にんじん・かぼちゃ）」を意識して一品追加してみてください。";
       }
     }
 
-    el.innerHTML = `<span style="font-size: 1.5rem; margin-right: 8px;">${icon}</span> <span>${advice}</span>`;
+    // Markdownライクな装飾をHTMLタグに変換
+    advice = advice.replace(/\*\*(.*?)\*\*/g, '<strong style="color:var(--text-primary);">$1</strong>');
+    advice = advice.replace(/\n/g, '<br>');
+
+    el.innerHTML = `
+      <div style="display: flex; align-items: flex-start; gap: 12px;">
+        <div style="font-size: 1.8rem; flex-shrink: 0; line-height: 1;">${icon}</div>
+        <div style="font-size: 0.9rem; line-height: 1.5; color: var(--text-secondary);">${advice}</div>
+      </div>
+    `;
   }
 
   // ===== BREATHING EXERCISE =====
