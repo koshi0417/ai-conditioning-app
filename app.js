@@ -576,7 +576,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function init() {
-    setupInputListeners();
     applyAppMode();
     document.addEventListener('appModeChanged', applyAppMode);
 
@@ -629,7 +628,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ----- Main Flow -----
-  els.btnAnalyze.addEventListener('click', async () => {
+  async function analyze() {
     const fatigue = analyzeFatigue();
     const topArea = getTopFatigueArea(fatigue);
     const sleep = calculateSleep(fatigue);
@@ -660,7 +659,7 @@ document.addEventListener('DOMContentLoaded', () => {
       RecoverAdvanced.updateBodyMap(fatigue);
       RecoverAdvanced.updateForecast(fatigue, sleep);
     }
-  });
+  }
 
   els.btnReset.addEventListener('click', () => {
     stopTimer();
