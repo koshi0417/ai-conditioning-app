@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (parseInt(exSlider.value) > t.exMax) exSlider.value = t.exMax;
         document.getElementById('exercise-time-val').textContent = `${exSlider.value}${t.exUnit}`;
         const exLabelsSpan = cards[0].querySelectorAll('.slider-labels span');
-        if (exLabelsSpan.length === 3) {
+        if (exLabelsSpan.length >= 3) {
           for (let i=0; i<3; i++) exLabelsSpan[i].textContent = t.exLabels[i];
         }
       }
@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (parseInt(deskSlider.value) > t.deskMax) deskSlider.value = t.deskMax;
         document.getElementById('desk-time-val').textContent = `${deskSlider.value}${t.deskUnit}`;
         const labels = cards[1].querySelectorAll('.slider-labels span');
-        if (labels.length === 3) {
+        if (labels.length >= 3) {
           for (let i=0; i<3; i++) labels[i].textContent = t.deskLabels[i];
         }
       }
@@ -311,10 +311,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let maxKey = 'eyes';
     let maxScore = 0;
     for (const [key, val] of Object.entries(fatigue)) {
-      if (val.score > maxScore) { maxScore = val.score; maxKey = key; }
+      if (typeof val === 'object' && val.score > maxScore) { maxScore = val.score; maxKey = key; }
     }
     // 全体的にスコアが高い場合は全身
-    const scores = Object.values(fatigue).map(v => v.score);
+    const scores = Object.values(fatigue).filter(v => typeof v === 'object').map(v => v.score);
     const avg = scores.reduce((a,b) => a+b, 0) / scores.length;
     if (avg > 4 && Math.max(...scores) - Math.min(...scores) < 2) {
       return 'full_body';
@@ -338,7 +338,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const bedM = parseInt(els.bedMinute.value);
     const bedMinutes = bedH * 60 + bedM;
 
-    const scores = Object.values(fatigue).map(v => v.score);
+    const scores = Object.values(fatigue).filter(v => typeof v === 'object').map(v => v.score);
     const totalFatigue = scores.reduce((a,b) => a+b, 0);
 
     // 疲労度に応じた推奨睡眠サイクル数（4〜6サイクル）
@@ -395,7 +395,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderResults(fatigue, sleep, topArea) {
     // Fatigue badges
     els.fatigueBadges.innerHTML = '';
-    for (const [, val] of Object.entries(fatigue)) {
+    for (const [key, val] of Object.entries(fatigue)) {
+      if (typeof val !== 'object') continue;
       const level = getFatigueLevel(val.score);
       const badge = document.createElement('span');
       badge.className = `fatigue-badge ${level}`;
@@ -404,6 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Comment
+    const mode = typeof RecoverFeatures !== 'undefined' ? RecoverFeatures.getAppMode() : 'general';
     const areaNames = typeof RecoverFeatures !== 'undefined' && RecoverFeatures.areaNames
         ? (mode === 'rugby' ? RecoverFeatures.areaNames : RecoverFeatures.areaNamesGeneral)
         : { head_neck: '頭・首', shoulder_arm: '肩・腕', lower_back: '腰', legs: '脚', full_body: '全身', eyes: '目', neck_shoulder: '首・肩' };
@@ -458,6 +460,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Stretch plan
+    const stretchDB = getStretchDB();
     stretchPlan = stretchDB[topArea] || stretchDB.full_body;
     currentStep = 0;
     renderStretchStep();

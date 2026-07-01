@@ -270,7 +270,7 @@ body::before { display: none; }
 
 .compact-card .input-group { margin-bottom: 16px; }
 .compact-card .input-label-text { font-size: 0.8rem; }
-.compact-card .preset-btn { min-width: 50px; padding: 8px 4px; font-size: 0.7rem;  background: var(--bg-primary) !important; box-shadow: var(--shadow-out-sm) !important; border: none !important; color: var(--text-secondary) !important; }
+.compact-card .preset-btn { min-width: 50px; padding: 8px 4px; font-size: 0.7rem;      }
 .compact-card .preset-btn .preset-icon { font-size: 1rem; }
 
 @media (max-width: 500px) {
@@ -330,7 +330,7 @@ body::before { display: none; }
   justify-content: center;
   font-size: 20px;
   flex-shrink: 0;
- background: var(--bg-primary) !important; box-shadow: var(--shadow-out-sm) !important; border: none !important; }
+    }
 
 .card-icon.blue { background: var(--bg-primary); }
 .card-icon.cyan { background: var(--bg-primary); }
@@ -386,7 +386,7 @@ input[type="range"] {
   background: var(--bg-primary);
   outline: none;
   transition: var(--transition);
- background: var(--bg-primary) !important; box-shadow: var(--shadow-in-sm) !important; border: none !important; }
+    }
 
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
@@ -439,7 +439,7 @@ input[type="range"]:active::-webkit-slider-thumb {
   text-align: center;
   position: relative;
   overflow: hidden;
- background: var(--bg-primary) !important; box-shadow: var(--shadow-out-sm) !important; border: none !important; color: var(--text-secondary) !important; }
+     }
 
 .preset-btn:hover {
   border-color: rgba(108, 140, 255, 0.5);
@@ -455,7 +455,7 @@ input[type="range"]:active::-webkit-slider-thumb {
   background: var(--bg-primary);
   transform: translateY(-2px);
   box-shadow: 0 4px 20px rgba(108, 140, 255, 0.35), inset 0 0 10px rgba(108, 140, 255, 0.2);
- box-shadow: var(--shadow-in-sm) !important; color: var(--accent-blue) !important; transform: scale(0.98); }
+   transform: scale(0.98); }
 
 .preset-btn.active .preset-icon {
   animation: iconBounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
@@ -533,7 +533,7 @@ input[type="range"]:active::-webkit-slider-thumb {
   margin-top: 8px;
   animation: btnGradientShift 4s ease infinite;
   box-shadow: 0 4px 15px rgba(108, 140, 255, 0.25);
- box-shadow: var(--shadow-out) !important; color: white !important; }
+   }
 
 @keyframes btnGradientShift {
   0%, 100% { background-position: 0% 50%; }
@@ -566,7 +566,7 @@ input[type="range"]:active::-webkit-slider-thumb {
 
 .btn-primary:hover::after { opacity: 1; }
 .btn-primary:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 12px 35px rgba(108, 140, 255, 0.45), 0 0 60px rgba(108, 140, 255, 0.15); }
-.btn-primary:active { transform: scale(0.98); box-shadow: var(--shadow-in) !important; }
+.btn-primary:active { transform: scale(0.98);  }
 
 .btn-secondary {
   width: 100%;
@@ -581,7 +581,7 @@ input[type="range"]:active::-webkit-slider-thumb {
   cursor: pointer;
   transition: var(--transition);
   margin-top: 10px;
- background: var(--bg-primary) !important; box-shadow: var(--shadow-out-sm) !important; border: none !important; color: var(--accent-blue) !important; }
+     }
 
 .btn-secondary:hover {
   border-color: var(--accent-blue);
@@ -1558,7 +1558,7 @@ input[type="range"]:active::-webkit-slider-thumb {
   opacity: 0;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   pointer-events: none;
- background: var(--bg-primary) !important; box-shadow: var(--shadow-out) !important; border: none !important; backdrop-filter: none !important; }
+     }
 .chat-window.open {
   transform: scale(1);
   opacity: 1;
@@ -1573,7 +1573,7 @@ input[type="range"]:active::-webkit-slider-thumb {
   justify-content: space-between;
   align-items: center;
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
- background: transparent !important; box-shadow: var(--shadow-out-sm) !important; }
+   }
 .chat-title { font-weight: 600; font-size: 0.95rem; }
 .chat-close { cursor: pointer; color: var(--text-muted); }
 .chat-close:hover { color: var(--text-primary); }
@@ -1600,13 +1600,13 @@ input[type="range"]:active::-webkit-slider-thumb {
   background: var(--bg-primary);
   align-self: flex-start;
   border-bottom-left-radius: 4px;
- background: var(--bg-primary) !important; box-shadow: var(--shadow-out-sm) !important; color: var(--text-primary) !important; }
+    }
 .chat-msg.user {
   background: var(--gradient-main);
   color: var(--text-primary);
   align-self: flex-end;
   border-bottom-right-radius: 4px;
- background: var(--accent-blue) !important; box-shadow: var(--shadow-out-sm) !important; color: white !important; }
+    }
 
 .chat-input-area {
   padding: 12px;
@@ -1623,7 +1623,7 @@ input[type="range"]:active::-webkit-slider-thumb {
   color: var(--text-primary);
   font-size: 0.85rem;
   outline: none;
- background: var(--bg-primary) !important; box-shadow: var(--shadow-in-sm) !important; border: none !important; color: var(--text-primary) !important; }
+     }
 .chat-input:focus { border-color: var(--accent-blue); }
 .chat-send {
   background: var(--accent-blue);
@@ -2094,8 +2094,8 @@ input[type="range"]:active::-webkit-slider-thumb {
   .input-grid { grid-template-columns: repeat(3, 1fr); gap: 24px; }
   .glass-card { margin-bottom: 24px; }
   .hero-card { grid-column: span 3; }
-  .btn-primary { font-size: 1.2rem; padding: 24px; letter-spacing: 2px;  box-shadow: var(--shadow-out) !important; color: white !important; }
-  .preset-btn { font-size: 1rem; padding: 16px 12px;  background: var(--bg-primary) !important; box-shadow: var(--shadow-out-sm) !important; border: none !important; color: var(--text-secondary) !important; }
+  .btn-primary { font-size: 1.2rem; padding: 24px; letter-spacing: 2px;    }
+  .preset-btn { font-size: 1rem; padding: 16px 12px;      }
   .preset-btn .preset-icon { font-size: 1.5rem; margin-bottom: 8px; }
   .history-chart-container { height: 250px; }
   .bar-chart { height: 200px; }
@@ -2114,7 +2114,7 @@ input[type="range"]:active::-webkit-slider-thumb {
   .app-container { padding: 12px 12px 30px; }
   .glass-card { padding: 18px; }
   .sleep-info-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
-  .time-input { font-size: 1.5rem; width: 75px; padding: 8px 12px;  background: var(--bg-primary) !important; box-shadow: var(--shadow-in) !important; border: none !important; color: var(--text-primary) !important; }
+  .time-input { font-size: 1.5rem; width: 75px; padding: 8px 12px;      }
   .badge-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
   .bodymap-svg { width: 140px; }
 }
