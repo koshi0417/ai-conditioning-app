@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="ラグビー部の練習・試合後の疲労を分析し、最適なリカバリストレッチと翌朝のスケジュールを提案するAIコンディショニングアプリ" />
+  <meta name="description" content="部活の練習・試合後の疲労を分析し、最適なリカバリストレッチと翌朝のスケジュールを提案するAIコンディショニングアプリ" />
   <title>Recover AI</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
@@ -24,11 +24,11 @@
         <p style="font-size: 0.85rem; color: #cbd5e1;">日々のデスクワークや立ち仕事の疲れをリセット</p>
       </button>
 
-      <!-- ラグビーモードボタン -->
+      <!-- 部活モードボタン -->
       <button id="btn-mode-rugby" class="glass-card" style="padding: 24px; text-align: left; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); transition: transform 0.2s, background 0.2s;">
-        <div style="font-size: 2rem; margin-bottom: 12px;">🏉</div>
-        <h3 style="font-size: 1.2rem; font-weight: 600; color: #f8fafc; margin-bottom: 4px;">ラグビー部</h3>
-        <p style="font-size: 0.85rem; color: #cbd5e1;">激しいコンタクト練習後の身体をリカバリ</p>
+        <div style="font-size: 2rem; margin-bottom: 12px;">🏋️</div>
+        <h3 style="font-size: 1.2rem; font-weight: 600; color: #f8fafc; margin-bottom: 4px;">部活</h3>
+        <p style="font-size: 0.85rem; color: #cbd5e1;">激しい練習・試合後の身体をリカバリ</p>
       </button>
     </div>
   </div>
@@ -47,7 +47,7 @@
       <!-- モード切り替え -->
       <select id="app-mode-selector" style="background: var(--bg-primary); border: none; padding: 6px 10px; border-radius: 12px; box-shadow: var(--shadow-out-sm); cursor: pointer; outline: none; font-family: 'Inter', sans-serif; font-size: 0.85rem; color: var(--text-primary);">
         <option value="general">一般モード</option>
-        <option value="rugby">ラグビー部モード</option>
+        <option value="rugby">部活モード</option>
       </select>
       <!-- スマホ同期ボタン -->
       <button id="btn-sync-mobile" style="display: flex; align-items: center; justify-content: center; background: var(--bg-primary); padding: 6px; border-radius: 50%; box-shadow: var(--shadow-out-sm); border: none; cursor: pointer; transition: transform 0.2s; width: 36px; height: 36px;">
@@ -148,7 +148,7 @@
           </div>
         </div>
 
-        <!-- ★ 詳細メニューコンテナ (ラグビーモード専用) -->
+        <!-- ★ 詳細メニューコンテナ (部活モード専用) -->
         <div id="rugby-menu-builder" style="display: none; grid-column: span 3; margin-bottom: 24px;">
           <div class="glass-card compact-card stagger-2-5">
             <div class="compact-header" style="justify-content: space-between; margin-bottom: 16px;">
@@ -167,7 +167,7 @@
           </div>
         </div>
 
-        <!-- ★ 体重変化コンテナ (ラグビーモード専用) -->
+        <!-- ★ 体重変化コンテナ (部活モード専用) -->
         <div id="rugby-weight-container" style="display: none; grid-column: span 3; margin-bottom: 24px;">
           <div class="glass-card compact-card stagger-2-8">
             <div class="compact-header" style="margin-bottom: 16px;">
